@@ -59,7 +59,7 @@ const profile = {
   age: 22,
   weight: 62,
   height: 1.63,
-  goal: 'Đừng lừi nữa, ăn đập giờ',
+  goal: 'Eo thon, mông săn chắc và cơ thể săn chắc hơn',
 }
 
 const weeklySchedule: WeeklyItem[] = [
@@ -684,9 +684,23 @@ function App() {
       <div className="app-shell">
         <header className="hero-head">
           <div className="hero-copy">
-            <p className="hero-tag">Dashboard Tập Luyện & Dinh Dưỡng</p>
-            <h1>Chăm chỉ ik con nợn</h1>
-            <p className="hero-text">Dưới đây là lịch cụ thể</p>
+            <p className="hero-tag">Tập Luyện & Dinh Dưỡng</p>
+            <h1>Tập ik con nợn</h1>
+            <p className="hero-text">Tối ưu lịch tập, chế độ ăn và trợ lý AI để đạt kết quả nhanh hơn.</p>
+            <div className="hero-stats">
+              <div className="stat-card">
+                <span>Chu kỳ</span>
+                <strong>7 ngày</strong>
+              </div>
+              <div className="stat-card">
+                <span>Buổi/tuần</span>
+                <strong>4 buổi</strong>
+              </div>
+              <div className="stat-card">
+                <span>Calo</span>
+                <strong>{calorieTarget} kcal</strong>
+              </div>
+            </div>
           </div>
           <div className="profile-summary">
             <div>
