@@ -8,6 +8,12 @@ type ChatMessage = {
   createdAt: string
 }
 
+type ChatbotReply = {
+  text: string
+  fallback: boolean
+  error?: string
+}
+
 type ExerciseDetail = {
   name: string
   sets: string
@@ -49,9 +55,22 @@ type AdviceSection = {
   points: string[]
 }
 
+type HuggingFaceRouterChoice = {
+  message?: {
+    content?: string
+  }
+  text?: string
+}
+
+type HuggingFaceRouterResponse = {
+  choices?: HuggingFaceRouterChoice[]
+  generated_text?: string
+  text?: string
+}
+
 const profile = {
   age: 22,
-  weight: 60,
+  weight: 62,
   height: 1.63,
   goal: 'Eo thon, mông săn chắc, cơ thể săn chắc hơn',
 }
@@ -59,182 +78,205 @@ const profile = {
 const weeklySchedule: WeeklyItem[] = [
   {
     day: 'Thứ 2',
-    focus: 'Mông + Đùi',
-    workout: 'Hip thrust, goblet squat, glute bridge',
+    focus: 'Mông (Nặng – Quan trọng nhất)',
+    workout: 'Hip thrust, Romanian deadlift, Bulgarian split squat, Cable kickback, Hip abduction machine, Glute bridge hold',
     meal: 'Ức gà, khoai lang, rau xanh',
-    notes: 'Tăng dần tạ nếu kỹ thuật đã ổn, chú trọng siết cơ mông ở mỗi rep.',
+    notes: 'Ưu tiên cảm nhận cơ (Mind-muscle connection). Nghỉ 60-90s giữa các bài nặng.',
     exercises: [
       {
         name: 'Hip thrust',
         sets: '4 hiệp',
-        reps: '12-15 lần',
-        notes: 'Đặt vai lên băng, nâng hông cao, siết mông ở đỉnh động tác, giữ gối không quá rộng.',
+        reps: '8-10 lần',
+        notes: 'Mức tạ: 15-20kg (tổng). Cằm luôn gập về phía ngực, lưng trên tựa ghế, gồng bụng chắc, đẩy hông lên đến khi đùi song song sàn rồi siết mông 2 giây.',
       },
       {
-        name: 'Goblet squat',
+        name: 'Romanian deadlift',
         sets: '3 hiệp',
-        reps: '10-12 lần',
-        notes: 'Giữ lưng thẳng, đẩy hông ra sau, xuống thấp đến khi đùi song song với sàn.',
+        reps: '10 lần',
+        notes: 'Mức tạ: 2 quả tạ đơn 6-8kg. Giữ thanh đòn/tạ sát chân, đẩy mông ra sau hết mức đến khi thấy đùi sau căng, lưng phải thẳng tuyệt đối.',
       },
       {
-        name: 'Glute bridge',
+        name: 'Bulgarian split squat',
+        sets: '3 hiệp mỗi bên',
+        reps: '8 lần',
+        notes: 'Mức tạ: 2 quả tạ đơn 4kg. Đứng cách ghế 2 bước chân, đặt 1 chân lên ghế. Khi xuống, hơi đổ người về trước để tác động sâu vào mông.',
+      },
+      {
+        name: 'Cable kickback',
+        sets: '3 hiệp',
+        reps: '12 lần',
+        notes: 'Mức tạ: 5-10kg trên máy cable. Hơi gập thân người, đá chân ra sau và chéo nhẹ ra ngoài, không để lưng dưới bị võng khi đá.',
+      },
+      {
+        name: 'Hip abduction machine',
         sets: '3 hiệp',
         reps: '15 lần',
-        notes: 'Kẹp cơ mông, đẩy hông lên đến khi thân thẳng, không ưỡn lưng quá nhiều.',
+        notes: 'Mức tạ: 20-25kg. Ngồi hơi nhổm mông khỏi ghế hoặc đổ người về trước, mở rộng gối chậm và kiểm soát lúc khép lại.',
       },
     ],
   },
   {
     day: 'Thứ 3',
-    focus: 'Lưng + Tay',
-    workout: 'Lat pulldown, dumbbell row, bicep curl',
+    focus: 'Lưng + Tay (Gọn người)',
+    workout: 'Lat pulldown, Seated row, Face pull, Lateral raise, Tricep pushdown, Dumbbell curl',
     meal: 'Cá hồi, salad, quinoa',
-    notes: 'Duy trì lưng thẳng, thở đều và kiểm soát chuyển động.',
+    notes: 'Tập trung vào chuyển động bả vai để không bị mỏi tay trước lưng.',
     exercises: [
       {
         name: 'Lat pulldown',
-        sets: '4 hiệp',
-        reps: '10-12 lần',
-        notes: 'Kéo xà xuống trước ngực, giữ cùi chỏ gần thân và ép xương bả vai lại.',
+        sets: '3 hiệp',
+        reps: '12 lần',
+        notes: 'Mức tạ: 15-20kg. Ưỡn ngực, kéo thanh xà về phía ngực trên, không dùng lực cổ tay, tưởng tượng đang kéo cùi chỏ xuống sườn.',
       },
       {
-        name: 'Dumbbell row',
-        sets: '3 hiệp mỗi bên',
-        reps: '10-12 lần',
-        notes: 'Giữ lưng thẳng, kéo tạ lên sát sườn và hạ từ từ.',
+        name: 'Seated row',
+        sets: '3 hiệp',
+        reps: '12 lần',
+        notes: 'Mức tạ: 15kg. Giữ lưng thẳng, khi kéo tay về thì ép chặt hai bả vai vào nhau, không nhún vai về phía tai.',
       },
       {
-        name: 'Bicep curl',
+        name: 'Lateral raise',
         sets: '3 hiệp',
         reps: '12-15 lần',
-        notes: 'Giữ khuỷu tay cố định, nghiêng thân nhẹ nếu cần để hoàn thành chuỗi.',
+        notes: 'Mức tạ: 2kg/bên. Cánh tay hơi cong, nâng tạ lên ngang vai (không cao hơn), lòng bàn tay hướng xuống sàn.',
+      },
+      {
+        name: 'Tricep pushdown',
+        sets: '3 hiệp',
+        reps: '12 lần',
+        notes: 'Mức tạ: 5-10kg. Giữ cùi chỏ cố định sát sườn, chỉ di chuyển cẳng tay từ trên xuống dưới đến khi thẳng tay.',
       },
     ],
   },
   {
     day: 'Thứ 4',
     focus: 'Eo + Bụng',
-    workout: 'Plank, leg raise, russian twist',
+    workout: 'Plank, Leg raise, Cable crunch, Dead bug, Stomach vacuum',
     meal: 'Salad trứng, yến mạch, trái cây',
-    notes: 'Giữ cột sống trung tính và tập bài core trước khi tập chính.',
+    notes: 'Bí quyết eo thon là gồng core (bracing) trong mọi bài tập.',
     exercises: [
+      {
+        name: 'Stomach vacuum',
+        sets: '5 hiệp',
+        reps: '20 giây',
+        notes: 'Thực hiện lúc bụng đói. Thở hết sạch hơi, hóp bụng sâu nhất có thể như muốn rốn chạm cột sống và giữ yên.',
+      },
       {
         name: 'Plank',
         sets: '3 hiệp',
-        reps: '30-45 giây',
-        notes: 'Giữ thân thẳng, không để hông quá cao hoặc thấp, siết cơ bụng.',
+        reps: '45 giây',
+        notes: 'Cơ thể là một đường thẳng. Siết mông và bụng thật chặt, không để hông bị thấp xuống gây đau lưng.',
       },
       {
-        name: 'Leg raise',
+        name: 'Dead bug',
         sets: '3 hiệp',
-        reps: '12 lần',
-        notes: 'Nâng chân thẳng, không xoay hông, hạ chậm để giữ áp lực vào cơ bụng.',
-      },
-      {
-        name: 'Russian twist',
-        sets: '3 hiệp',
-        reps: '16 lần',
-        notes: 'Ngồi hơi ngả ra sau, xoay thân với tạ nhẹ hoặc không tạ.',
+        reps: '12 lần mỗi bên',
+        notes: 'Ép chặt lưng dưới xuống sàn sao cho không đút lọt bàn tay qua. Chuyển động chân và tay thật chậm.',
       },
     ],
   },
   {
     day: 'Thứ 5',
-    focus: 'Mông + Core',
-    workout: 'Bulgarian split squat, deadlift nhẹ, cable kickback',
+    focus: 'Mông + Đùi',
+    workout: 'Squat, Leg press, Walking lunges, Leg extension, Hip thrust',
     meal: 'Tôm, bông cải xanh, gạo lứt',
-    notes: 'Chú ý giữ thăng bằng và siết cơ mông ở cuối mỗi hiệp.',
+    notes: 'Ngày tập mệt nhất, cần hít thở đúng: xuống hít vào, lên thở ra.',
     exercises: [
       {
-        name: 'Bulgarian split squat',
-        sets: '3 hiệp mỗi chân',
-        reps: '10-12 lần',
-        notes: 'Đặt một chân lên ghế, hạ gối xuống tạo góc 90 độ, giữ thân thẳng.',
-      },
-      {
-        name: 'Deadlift nhẹ',
-        sets: '3 hiệp',
+        name: 'Goblet Squat',
+        sets: '4 hiệp',
         reps: '10 lần',
-        notes: 'Giữ lưng thẳng, kéo tạ bằng cơ mông và cơ đùi sau, không dùng lưng dưới.',
+        notes: 'Mức tạ: 8-10kg. Giữ tạ trước ngực, mở gối theo hướng mũi chân, xuống sâu nhất có thể mà lưng vẫn thẳng.',
       },
       {
-        name: 'Cable kickback',
-        sets: '3 hiệp mỗi chân',
-        reps: '15 lần',
-        notes: 'Kéo chân ra sau, giữ mông siết chặt, không cong lưng.',
+        name: 'Leg press',
+        sets: '3 hiệp',
+        reps: '12 lần',
+        notes: 'Mức tạ: 40-50kg (tính cả bàn đạp). Đặt chân cao trên bàn đạp để ăn vào mông nhiều hơn. Lưu ý: Không khóa thẳng khớp gối ở đỉnh.',
+      },
+      {
+        name: 'Walking lunges',
+        sets: '3 hiệp',
+        reps: '12 bước mỗi chân',
+        notes: 'Mức tạ: 4kg/bên. Bước dài ra phía trước, giữ thân người đứng thẳng, gối chân sau gần chạm sàn.',
       },
     ],
-  },
-  {
+  },{
     day: 'Thứ 6',
-    focus: 'Cardio',
-    workout: 'Đi bộ nhanh hoặc elliptical 25 phút',
+    focus: 'Cardio + Mông nhẹ (Phục hồi năng động)',
+    workout: 'Đi bộ dốc, Glute bridge, Donkey kicks, Fire hydrant',
     meal: 'Sinh tố protein, hạt chia, rau củ',
-    notes: 'Tập cardio ở vùng nhịp tim vừa phải, không quá đuối.',
+    notes: 'Mục tiêu là làm nóng cơ thể và tăng lưu thông máu. Không cần tập đến mức kiệt sức.',
     exercises: [
       {
-        name: 'Đi bộ nhanh',
+        name: 'Đi bộ dốc (Incline Walk)',
         sets: '1 phiên',
-        reps: '25 phút',
-        notes: 'Giữ bước nhanh, thở tự nhiên, không nên quá gắng sức.',
+        reps: '20-25 phút',
+        notes: 'Mức độ: Độ dốc 5-8%, tốc độ 4.5-5.5 km/h. Không nắm tay vào thành máy để đốt calo tốt hơn và kích hoạt cơ mông.',
       },
       {
-        name: 'Elliptical',
-        sets: '1 phiên',
-        reps: '25 phút',
-        notes: 'Giữ tư thế thẳng, chuyển động đều và ổn định, nếu được.',
+        name: 'Glute bridge (Không tạ hoặc tạ nhẹ)',
+        sets: '3 hiệp',
+        reps: '20 lần',
+        notes: 'Mức tạ: 0-5kg. Nằm ngửa, co gối, đẩy hông lên cao và siết chặt mông trong 3 giây ở đỉnh trước khi hạ xuống.',
+      },
+      {
+        name: 'Donkey kicks',
+        sets: '3 hiệp',
+        reps: '15 lần/bên',
+        notes: 'Form: Quỳ 4 chân, giữ lưng thẳng không võng. Đá chân lên trời như đang muốn dùng gót chân chạm trần nhà.',
+      },
+      {
+        name: 'Fire hydrant',
+        sets: '3 hiệp',
+        reps: '15 lần/bên',
+        notes: 'Form: Giữ nguyên tư thế quỳ, mở rộng chân sang ngang như chú chó đang vươn chân. Giúp làm thon gọn phần hông bên.',
       },
     ],
   },
   {
     day: 'Thứ 7',
-    focus: 'Giãn cơ + phục hồi',
-    workout: 'Yoga nhẹ, pilates, stretch',
+    focus: 'Phục hồi & Giãn cơ (Stretch)',
+    workout: 'Yoga nhẹ, Full body stretching',
     meal: 'Súp rau, cá trắng, trái cây',
-    notes: 'Tập trung vào thư giãn cơ và lưu thông máu.',
+    notes: 'Giãn cơ giúp cơ bắp dài ra, thanh mảnh hơn và không bị thô cứng.',
     exercises: [
       {
-        name: 'Yoga nhẹ',
-        sets: '1 phiên',
-        reps: '20 phút',
-        notes: 'Thực hiện các động tác mở hông, giãn lưng và thở sâu.',
+        name: 'Child’s Pose (Tư thế em bé)',
+        sets: '3 hiệp',
+        reps: '45 giây',
+        notes: 'Thư giãn toàn bộ vùng lưng dưới và mông sau một tuần tập nặng.',
       },
       {
-        name: 'Pilates',
-        sets: '1 phiên',
-        reps: '20 phút',
-        notes: 'Tập trung vào cơ lõi và điều hòa nhịp thở.',
+        name: 'Pigeon Pose (Tư thế bồ câu)',
+        sets: '2 hiệp/bên',
+        reps: '30 giây',
+        notes: 'Đây là bài giãn cơ mông "thần thánh", giúp giảm đau mỏi cực tốt sau các buổi Squat/Hip Thrust.',
       },
       {
-        name: 'Stretch',
-        sets: '1 phiên',
-        reps: '15 phút',
-        notes: 'Giãn nhẹ từng nhóm cơ, giữ mỗi vị trí 20-30 giây.',
+        name: 'Cobra Stretch (Tư thế con hổ)',
+        sets: '3 hiệp',
+        reps: '30 giây',
+        notes: 'Nằm sấp, chống tay nâng người để giãn toàn bộ vùng cơ bụng.',
       },
     ],
   },
   {
     day: 'Chủ nhật',
-    focus: 'Nghỉ phục hồi',
-    workout: 'Đi bộ nhẹ, kéo dãn cơ',
-    meal: 'Salad nhẹ, nước lọc, trái cây',
-    notes: 'Nghỉ ngơi chủ động, vẫn giữ cơ thể năng động nhẹ nhàng.',
+    focus: 'Nghỉ ngơi hoàn toàn',
+    workout: 'Đi bộ thư giãn hoặc nghỉ ngơi',
+    meal: 'Ăn uống thoải mái hơn một chút (Cheat meal nhẹ)',
+    notes: 'Để cơ thể tự phục hồi hoàn toàn cho chu kỳ Thứ 2 tuần tới.',
     exercises: [
       {
-        name: 'Đi bộ nhẹ',
+        name: 'Đi bộ nhẹ nhàng',
         sets: '1 phiên',
-        reps: '20-30 phút',
-        notes: 'Giữ nhịp thở thoải mái, thư giãn toàn thân.',
-      },
-      {
-        name: 'Kéo dãn cơ',
-        sets: '1 phiên',
-        reps: '10 phút',
-        notes: 'Kéo duỗi nhẹ nhàng các nhóm cơ, tập trung vùng chân và lưng.',
+        reps: '15-20 phút',
+        notes: 'Đi dạo ngoài trời hoặc trong trung tâm thương mại để tinh thần thoải mái.',
       },
     ],
-  },
-]
+  }
+];
 
 const dietPlan: DietItem[] = [
   {
@@ -242,31 +284,31 @@ const dietPlan: DietItem[] = [
     meals: [
       {
         name: 'Bữa sáng',
-        description: 'Yến mạch nóng với trứng luộc và táo tươi.',
-        preparation: 'Nấu yến mạch với nước hoặc sữa hạnh nhân, thêm mật ong nhẹ; ăn kèm trứng luộc và táo thái lát.',
-        alternatives: ['Ngũ cốc nguyên hạt + sữa chua Hy Lạp', 'Bánh mì nguyên cám + trứng chiên ít dầu'],
-        nutrition: { calories: '420 kcal', protein: '22g', carbs: '50g', fat: '14g' },
+        description: '2 quả trứng ốp la, 1/2 ổ bánh mì đen và dưa leo.',
+        preparation: 'Chiên trứng với ít dầu, nướng bánh mì đen và thêm dưa leo tươi.',
+        alternatives: ['Bánh mì nguyên cám + trứng luộc', 'Yến mạch + chuối'],
+        nutrition: { calories: '410 kcal', protein: '22g', carbs: '38g', fat: '18g' },
       },
       {
         name: 'Bữa trưa',
-        description: 'Ức gà nướng, khoai lang, rau xanh.',
-        preparation: 'Ướp ức gà với tiêu, tỏi, mật ong nhẹ và nướng; ăn cùng khoai lang luộc và salad rau củ.',
-        alternatives: ['Cá hồi nướng + gạo lứt', 'Đậu hũ áp chảo + rau củ hấp'],
-        nutrition: { calories: '520 kcal', protein: '38g', carbs: '45g', fat: '16g' },
+        description: 'Ức gà kho tiêu, cơm gạo lứt và canh rau muống.',
+        preparation: 'Ướp ức gà với tỏi, tiêu và nước mắm nhẹ, kho chín; phục vụ với cơm gạo lứt và canh rau muống.',
+        alternatives: ['Thịt gà luộc + rau luộc', 'Cá basa kho + khoai lang luộc'],
+        nutrition: { calories: '520 kcal', protein: '36g', carbs: '50g', fat: '15g' },
       },
       {
         name: 'Bữa tối',
-        description: 'Cá hồi áp chảo với salad rau củ và quinoa.',
-        preparation: 'Áp chảo cá hồi với ít dầu ô liu, trộn salad với giấm táo và olive; nấu quinoa với nước.',
-        alternatives: ['Cá basa hấp + rau luộc', 'Tôm nướng + salad đậu'],
-        nutrition: { calories: '480 kcal', protein: '34g', carbs: '38g', fat: '18g' },
+        description: 'Cá basa kho tộ, rau cải xào tỏi và khoai lang luộc.',
+        preparation: 'Kho cá basa với hành, tỏi, nước dừa; xào rau cải và luộc khoai lang.',
+        alternatives: ['Thịt lợn xào rau cải + cơm', 'Đậu hũ kho + rau luộc'],
+        nutrition: { calories: '470 kcal', protein: '32g', carbs: '42g', fat: '16g' },
       },
       {
         name: 'Bữa phụ',
-        description: 'Sữa chua Hy Lạp với hạt chia.',
-        preparation: 'Trộn sữa chua với hạt chia và một chút mật ong, dùng kèm trái cây nhỏ.',
-        alternatives: ['Trái cây + hạt điều', 'Sinh tố protein'],
-        nutrition: { calories: '190 kcal', protein: '14g', carbs: '18g', fat: '8g' },
+        description: 'Sữa chua không đường và 1 quả chuối.',
+        preparation: 'Ăn sữa chua với chuối cắt lát.',
+        alternatives: ['Táo + hạt hướng dương', 'Trái cây tươi'],
+        nutrition: { calories: '180 kcal', protein: '8g', carbs: '30g', fat: '4g' },
       },
     ],
   },
@@ -275,31 +317,31 @@ const dietPlan: DietItem[] = [
     meals: [
       {
         name: 'Bữa sáng',
-        description: 'Sinh tố xanh với chuối và bánh mì nguyên cám.',
-        preparation: 'Xay chuối, rau bina, sữa hạnh nhân và một thìa bơ hạt; ăn kèm 1 lát bánh mì nguyên cám.',
-        alternatives: ['Cháo yến mạch + trái cây', 'Sữa chua + granola ít đường'],
-        nutrition: { calories: '390 kcal', protein: '12g', carbs: '55g', fat: '11g' },
+        description: 'Bánh mì đen với trứng luộc và cà chua.',
+        preparation: 'Nướng bánh mì, luộc trứng và thêm cà chua thái lát.',
+        alternatives: ['Cháo yến mạch + trái cây', 'Sữa chua + hạt ngũ cốc'],
+        nutrition: { calories: '390 kcal', protein: '20g', carbs: '36g', fat: '14g' },
       },
       {
         name: 'Bữa trưa',
-        description: 'Tôm rim với bông cải xanh và gạo lứt.',
-        preparation: 'Xào tôm với tỏi, hạt tiêu; hấp bông cải xanh và dùng cùng gạo lứt.',
-        alternatives: ['Ức gà xào rau củ', 'Cá nhám hấp + rau luộc'],
-        nutrition: { calories: '500 kcal', protein: '36g', carbs: '48g', fat: '14g' },
+        description: 'Thịt lợn nạc xào rau cải và cơm gạo lứt.',
+        preparation: 'Xào thịt lợn nạc với rau cải, cà rốt và hành; dùng với cơm gạo lứt.',
+        alternatives: ['Ức gà xào rau củ', 'Cá basa nướng + rau luộc'],
+        nutrition: { calories: '520 kcal', protein: '34g', carbs: '50g', fat: '16g' },
       },
       {
         name: 'Bữa tối',
-        description: 'Đậu hũ chiên nhẹ với salad cà chua và rau củ hấp.',
-        preparation: 'Chiên đậu hũ với một ít dầu, tạo salad cà chua và hấp thêm rau củ.',
-        alternatives: ['Tempeh nướng + salad', 'Cá trắng hấp + cải bó xôi'],
-        nutrition: { calories: '430 kcal', protein: '24g', carbs: '30g', fat: '18g' },
+        description: 'Canh bí đỏ với đậu phụ và rau muống luộc.',
+        preparation: 'Nấu canh bí đỏ, thêm đậu phụ và phục vụ cùng rau muống luộc.',
+        alternatives: ['Cá cơm kho + rau luộc', 'Gà luộc + cải bó xôi'],
+        nutrition: { calories: '430 kcal', protein: '24g', carbs: '40g', fat: '14g' },
       },
       {
         name: 'Bữa phụ',
-        description: 'Hạt óc chó và một quả lê.',
-        preparation: 'Ăn trực tiếp hạt óc chó cùng lê thái lát.',
-        alternatives: ['Hạt điều + táo', 'Thanh hạt dinh dưỡng'],
-        nutrition: { calories: '210 kcal', protein: '6g', carbs: '20g', fat: '14g' },
+        description: 'Hạt hướng dương và 1 quả lê.',
+        preparation: 'Ăn hạt hướng dương rang nhẹ cùng lê tươi.',
+        alternatives: ['Hạt điều + táo', 'Sữa đậu nành'],
+        nutrition: { calories: '190 kcal', protein: '6g', carbs: '22g', fat: '10g' },
       },
     ],
   },
@@ -308,31 +350,31 @@ const dietPlan: DietItem[] = [
     meals: [
       {
         name: 'Bữa sáng',
-        description: 'Bánh mì nguyên cám với trứng ốp la và cà chua.',
-        preparation: 'Nướng bánh mì, chiên trứng nhẹ và phục vụ với cà chua tươi.',
-        alternatives: ['Bánh mì bơ đậu phộng ít đường', 'Yến mạch + trứng luộc'],
-        nutrition: { calories: '410 kcal', protein: '20g', carbs: '44g', fat: '15g' },
+        description: 'Yến mạch với trứng luộc và rau xà lách.',
+        preparation: 'Pha yến mạch với nước nóng, ăn kèm trứng luộc và xà lách.',
+        alternatives: ['Bánh mì nguyên cám + bơ đậu phộng', 'Cháo yến mạch + chuối'],
+        nutrition: { calories: '400 kcal', protein: '22g', carbs: '45g', fat: '12g' },
       },
       {
         name: 'Bữa trưa',
-        description: 'Cá basa nướng với măng tây và khoai lang.',
-        preparation: 'Nướng cá basa với chanh, hấp măng tây và nướng khoai lang.',
-        alternatives: ['Cá tuyết hấp + salad', 'Gà nướng + rau củ'],
-        nutrition: { calories: '510 kcal', protein: '38g', carbs: '46g', fat: '14g' },
+        description: 'Thịt lợn quay nhẹ, canh rau muống và cơm gạo lứt.',
+        preparation: 'Quay thịt lợn nạc nhẹ nhàng, nấu canh rau muống và dùng cơm gạo lứt.',
+        alternatives: ['Cá basa kho + rau luộc', 'Gà luộc + khoai lang'],
+        nutrition: { calories: '520 kcal', protein: '34g', carbs: '48g', fat: '16g' },
       },
       {
         name: 'Bữa tối',
-        description: 'Canh bí đỏ với ức gà xé và rau trộn.',
-        preparation: 'Ninh bí đỏ mềm, xé ức gà luộc và trộn rau xanh với dầu ô liu.',
-        alternatives: ['Súp lơ xanh + cá nướng', 'Trứng hấp + salad'],
-        nutrition: { calories: '450 kcal', protein: '32g', carbs: '40g', fat: '16g' },
+        description: 'Canh cải chua nấu cá, salad dưa leo và ít khoai lang luộc.',
+        preparation: 'Nấu canh cải chua với cá, trộn salad dưa leo và luộc khoai lang.',
+        alternatives: ['Đậu hũ hấp + rau luộc', 'Gà xào rau củ'],
+        nutrition: { calories: '430 kcal', protein: '30g', carbs: '42g', fat: '14g' },
       },
       {
         name: 'Bữa phụ',
-        description: 'Sinh tố protein với dâu tây.',
-        preparation: 'Xay whey protein với sữa hạnh nhân và dâu tây.',
-        alternatives: ['Sữa chua trái cây', 'Hạt năng lượng tự làm'],
-        nutrition: { calories: '210 kcal', protein: '20g', carbs: '18g', fat: '8g' },
+        description: 'Sữa chua không đường với hạt điều.',
+        preparation: 'Trộn sữa chua với hạt điều và chút mật ong.',
+        alternatives: ['Dưa leo + hummus', 'Quả táo'],
+        nutrition: { calories: '200 kcal', protein: '12g', carbs: '16g', fat: '10g' },
       },
     ],
   },
@@ -341,31 +383,31 @@ const dietPlan: DietItem[] = [
     meals: [
       {
         name: 'Bữa sáng',
-        description: 'Yến mạch lạnh với sữa hạnh nhân và chuối lát.',
-        preparation: 'Ngâm yến mạch trong sữa hạnh nhân, thêm chuối và hạt chia.',
-        alternatives: ['Smoothie bơ + yến mạch', 'Bánh mì nguyên cám + trứng luộc'],
-        nutrition: { calories: '400 kcal', protein: '14g', carbs: '50g', fat: '13g' },
+        description: 'Bánh mì nguyên cám với ức gà nướng và cà chua.',
+        preparation: 'Nướng ức gà, kẹp cùng bánh mì nguyên cám và cà chua.',
+        alternatives: ['Yến mạch + trứng luộc', 'Smoothie chuối + sữa hạt'],
+        nutrition: { calories: '430 kcal', protein: '28g', carbs: '38g', fat: '16g' },
       },
       {
         name: 'Bữa trưa',
-        description: 'Gà áp chảo với salad bơ và gạo lứt.',
-        preparation: 'Áp chảo ức gà, cắt bơ và trộn salad, dùng với gạo lứt.',
-        alternatives: ['Cá hồi áp chảo + rau củ', 'Đậu hũ xào rau củ'],
-        nutrition: { calories: '530 kcal', protein: '38g', carbs: '42g', fat: '18g' },
+        description: 'Gà chiên ít dầu cùng khoai lang và rau cải xào.',
+        preparation: 'Chiên gà trong nồi không dầu, luộc khoai lang và xào rau cải.',
+        alternatives: ['Cá basa nướng + rau luộc', 'Thịt lợn luộc + salad'],
+        nutrition: { calories: '520 kcal', protein: '36g', carbs: '48g', fat: '16g' },
       },
       {
         name: 'Bữa tối',
-        description: 'Súp lơ xanh luộc với cá hồi nướng và trứng luộc.',
-        preparation: 'Luộc súp lơ, nướng cá hồi đơn giản và phục vụ cùng trứng luộc.',
-        alternatives: ['Cá thu hấp + salad', 'Gà luộc + rau xanh'],
-        nutrition: { calories: '470 kcal', protein: '36g', carbs: '30g', fat: '20g' },
+        description: 'Canh rau cải với thịt bằm và cơm gạo lứt.',
+        preparation: 'Nấu canh rau cải với thịt lợn bằm, dùng với cơm gạo lứt vừa đủ.',
+        alternatives: ['Cá kho + canh chua', 'Gà luộc + rau luộc'],
+        nutrition: { calories: '450 kcal', protein: '32g', carbs: '40g', fat: '16g' },
       },
       {
         name: 'Bữa phụ',
-        description: 'Sữa chua ít béo với hạt hạnh nhân.',
-        preparation: 'Trộn sữa chua với hạt hạnh nhân và ít mật ong.',
-        alternatives: ['Phô mai tươi + táo', 'Hạt điều + chuối'],
-        nutrition: { calories: '200 kcal', protein: '12g', carbs: '14g', fat: '12g' },
+        description: 'Chuối và hạt hướng dương.',
+        preparation: 'Ăn chuối và hạt hướng dương rang nhẹ.',
+        alternatives: ['Táo + hạt điều', 'Sữa chua nhẹ'],
+        nutrition: { calories: '190 kcal', protein: '6g', carbs: '38g', fat: '8g' },
       },
     ],
   },
@@ -374,31 +416,31 @@ const dietPlan: DietItem[] = [
     meals: [
       {
         name: 'Bữa sáng',
-        description: 'Phở cuốn gà với rau thơm.',
-        preparation: 'Cuốn gà luộc với rau thơm và bánh phở, dùng với nước chấm nhẹ.',
-        alternatives: ['Bánh cuốn + thịt gà', 'Bún gà luộc'],
-        nutrition: { calories: '420 kcal', protein: '26g', carbs: '48g', fat: '12g' },
+        description: 'Phở gà nhẹ với nhiều rau thơm.',
+        preparation: 'Nấu phở gà với nước dùng thanh, nhiều rau thơm và ít bánh phở.',
+        alternatives: ['Bún gà luộc', 'Bánh mì ốp la'],
+        nutrition: { calories: '420 kcal', protein: '26g', carbs: '45g', fat: '12g' },
       },
       {
         name: 'Bữa trưa',
-        description: 'Thịt bò xào rau củ với cơm lứt.',
-        preparation: 'Xào thịt bò với cà rốt, bông cải và hành tây; ăn cùng cơm lứt.',
-        alternatives: ['Ức gà xào rau củ', 'Cá hồi nướng + gạo lứt'],
-        nutrition: { calories: '520 kcal', protein: '34g', carbs: '50g', fat: '18g' },
+        description: 'Thịt lợn nạc xào rau cải và cơm gạo lứt.',
+        preparation: 'Xào thịt lợn với rau cải, nước mắm và tiêu; ăn với cơm gạo lứt.',
+        alternatives: ['Gà xào nấm + rau luộc', 'Cá basa hấp + rau cải'],
+        nutrition: { calories: '520 kcal', protein: '34g', carbs: '50g', fat: '16g' },
       },
       {
         name: 'Bữa tối',
-        description: 'Cá trắng hấp với bông cải xanh và cải bó xôi.',
-        preparation: 'Hấp cá trắng cùng gừng, dùng với bông cải xanh và cải bó xôi luộc.',
-        alternatives: ['Cá basa hấp + rau luộc', 'Đậu hũ hấp + salad'],
-        nutrition: { calories: '440 kcal', protein: '34g', carbs: '28g', fat: '16g' },
+        description: 'Cá trắng hấp với cải bó xôi và khoai lang nướng.',
+        preparation: 'Hấp cá trắng với gừng, nướng khoai lang và luộc cải bó xôi.',
+        alternatives: ['Cá basa hấp + rau muống luộc', 'Đậu hũ hấp + salad'],
+        nutrition: { calories: '450 kcal', protein: '34g', carbs: '38g', fat: '14g' },
       },
       {
         name: 'Bữa phụ',
-        description: 'Trái cây tươi với hạt điều.',
-        preparation: 'Ăn mix trái cây tươi với hạt điều rang nhẹ.',
-        alternatives: ['Hạt mắc ca + táo', 'Thanh yến mạch tự nhiên'],
-        nutrition: { calories: '200 kcal', protein: '6g', carbs: '24g', fat: '10g' },
+        description: 'Cam và sữa đậu nành.',
+        preparation: 'Ăn cam và uống sữa đậu nành ít đường.',
+        alternatives: ['Táo + hạt hạnh nhân', 'Sữa chua nhẹ'],
+        nutrition: { calories: '190 kcal', protein: '8g', carbs: '30g', fat: '6g' },
       },
     ],
   },
@@ -407,31 +449,31 @@ const dietPlan: DietItem[] = [
     meals: [
       {
         name: 'Bữa sáng',
-        description: 'Smoothie bơ với yến mạch và sữa hạnh nhân.',
-        preparation: 'Xay bơ, yến mạch và sữa hạnh nhân thành smoothie mịn.',
-        alternatives: ['Sinh tố chuối + bơ đậu phộng', 'Yến mạch lạnh + trái cây'],
-        nutrition: { calories: '430 kcal', protein: '12g', carbs: '48g', fat: '18g' },
+        description: 'Yến mạch với sữa và trái cây nhẹ.',
+        preparation: 'Pha yến mạch với sữa, thêm chuối hoặc táo cắt lát.',
+        alternatives: ['Sinh tố chuối + bơ đậu phộng', 'Bánh mì nguyên cám + trứng'],
+        nutrition: { calories: '420 kcal', protein: '16g', carbs: '48g', fat: '14g' },
       },
       {
         name: 'Bữa trưa',
-        description: 'Salad quinoa với ức gà và rau mix.',
-        preparation: 'Trộn quinoa chín với ức gà xé và rau xanh, thêm dầu ô liu.',
-        alternatives: ['Salad đậu gà + rau củ', 'Bún gạo lứt trộn gà'],
-        nutrition: { calories: '500 kcal', protein: '36g', carbs: '42g', fat: '18g' },
+        description: 'Thịt lợn hấp, rau muống xào tỏi và cơm gạo lứt.',
+        preparation: 'Hấp thịt lợn nạc, xào rau muống với tỏi và dùng cơm gạo lứt.',
+        alternatives: ['Gà luộc + rau luộc', 'Cá basa nướng + salad'],
+        nutrition: { calories: '520 kcal', protein: '34g', carbs: '48g', fat: '16g' },
       },
       {
         name: 'Bữa tối',
-        description: 'Canh nấm đông cô với ức gà chiên không dầu và rau củ.',
-        preparation: 'Nấu canh nấm đông cô; chiên ức gà bằng nồi không dầu và ăn kèm rau củ hấp.',
-        alternatives: ['Cá kho + canh rau', 'Thịt gà luộc + salad'],
-        nutrition: { calories: '460 kcal', protein: '34g', carbs: '30g', fat: '18g' },
+        description: 'Cá basa hấp với canh bí đỏ và rau cải luộc.',
+        preparation: 'Hấp cá basa, nấu canh bí đỏ và luộc rau cải.',
+        alternatives: ['Canh rau muống + đậu phụ', 'Gà xào cực ít dầu + rau củ'],
+        nutrition: { calories: '450 kcal', protein: '32g', carbs: '36g', fat: '16g' },
       },
       {
         name: 'Bữa phụ',
-        description: 'Cà rốt với hummus.',
-        preparation: 'Cắt cà rốt thanh và chấm hummus.',
-        alternatives: ['Dưa chuột + hummus', 'Ớt chuông + phô mai ít béo'],
-        nutrition: { calories: '180 kcal', protein: '6g', carbs: '22g', fat: '10g' },
+        description: 'Trái cây tươi theo mùa.',
+        preparation: 'Ăn trực tiếp trái cây tươi như táo, cam, xoài chua.',
+        alternatives: ['Chuối + hạt hướng dương', 'Sữa chua nhẹ'],
+        nutrition: { calories: '180 kcal', protein: '4g', carbs: '38g', fat: '2g' },
       },
     ],
   },
@@ -440,31 +482,31 @@ const dietPlan: DietItem[] = [
     meals: [
       {
         name: 'Bữa sáng',
-        description: 'Bánh mì nguyên cám với trứng và rau xà lách.',
-        preparation: 'Nướng bánh mì, phục vụ với trứng ốp và rau xà lách tươi.',
-        alternatives: ['Bánh mì bơ + chuối', 'Yến mạch + sữa chua'],
-        nutrition: { calories: '400 kcal', protein: '18g', carbs: '44g', fat: '14g' },
+        description: 'Bánh mì nguyên cám với trứng ốp la và rau sống.',
+        preparation: 'Nướng bánh mì, ốp la trứng và ăn kèm rau sống.',
+        alternatives: ['Yến mạch + trứng luộc', 'Bánh mì bơ + chuối'],
+        nutrition: { calories: '400 kcal', protein: '18g', carbs: '42g', fat: '14g' },
       },
       {
         name: 'Bữa trưa',
-        description: 'Cá tầm quay với bông cải trắng và khoai lang.',
-        preparation: 'Quay cá tầm cùng gia vị nhẹ, ăn kèm bông cải và khoai lang nướng.',
-        alternatives: ['Cá hồi nướng + salad', 'Gà nướng + khoai lang'],
-        nutrition: { calories: '520 kcal', protein: '38g', carbs: '42g', fat: '16g' },
+        description: 'Gà luộc, khoai lang luộc và rau cải luộc.',
+        preparation: 'Luộc gà với gừng, luộc khoai lang và rau cải.',
+        alternatives: ['Thịt lợn nạc hấp + rau luộc', 'Cá basa hấp + rau muống'],
+        nutrition: { calories: '510 kcal', protein: '36g', carbs: '52g', fat: '12g' },
       },
       {
         name: 'Bữa tối',
-        description: 'Súp rau củ với salad trộn nhẹ.',
-        preparation: 'Nấu súp rau củ đa dạng, trộn salad xanh với dầu oliu và giấm táo.',
-        alternatives: ['Canh bí đỏ + salad', 'Súp gà + rau củ'],
-        nutrition: { calories: '360 kcal', protein: '14g', carbs: '34g', fat: '16g' },
+        description: 'Canh rau muống, đậu phụ và salad rau.' ,
+        preparation: 'Nấu canh rau muống, hấp đậu phụ và trộn salad nhẹ.',
+        alternatives: ['Canh cải + gà xé', 'Súp rau củ + cá hấp'],
+        nutrition: { calories: '360 kcal', protein: '18g', carbs: '32g', fat: '12g' },
       },
       {
         name: 'Bữa phụ',
-        description: 'Trái cây và một quả chuối.',
-        preparation: 'Ăn trực tiếp trái cây tươi và chuối.',
-        alternatives: ['Táo + hạt điều', 'Sữa chua trái cây'],
-        nutrition: { calories: '210 kcal', protein: '4g', carbs: '46g', fat: '2g' },
+        description: 'Trái cây tươi và 1 quả chuối.',
+        preparation: 'Ăn trái cây theo mùa cùng chuối.',
+        alternatives: ['Táo + hạt ngũ cốc', 'Sữa chua nhẹ'],
+        nutrition: { calories: '200 kcal', protein: '5g', carbs: '42g', fat: '4g' },
       },
     ],
   },
@@ -505,76 +547,151 @@ const adviceSections: AdviceSection[] = [
   },
 ]
 
-const openAIHeaders = () => {
-  const apiKey = import.meta.env.VITE_OPENAI_API_KEY
+
+
+const huggingFaceHeaders = () => {
+  const apiKey = import.meta.env.VITE_HF_API_KEY
   return {
     'Content-Type': 'application/json',
     Authorization: apiKey ? `Bearer ${apiKey}` : '',
   }
 }
 
-function generateLocalAIReply(message: string): string {
-  const prompt = message.toLowerCase()
-  if (prompt.includes('mông') || prompt.includes('đùi') || prompt.includes('squat') || prompt.includes('hip')) {
-    return 'Nếu bạn muốn mông săn chắc, tập trung vào hip thrust, Bulgarian split squat và glute bridge. Chú ý siết mông ở cuối mỗi lần đẩy, giữ cột sống thẳng và tăng dần tạ khi đã quen.'
-  }
-  if (prompt.includes('eo') || prompt.includes('bụng') || prompt.includes('gập bụng') || prompt.includes('plank')) {
-    return 'Để eo thon và bụng săn chắc, làm plank, leg raise và russian twist. Kết hợp với chế độ ăn ít tinh bột và nhiều rau xanh để phần bụng rõ hơn.'
-  }
-  if (prompt.includes('ăn') || prompt.includes('dinh dưỡng') || prompt.includes('calo')) {
-    return 'Ưu tiên protein nạc, rau xanh, carb phức hợp và chất béo tốt. Chia bữa ăn thành 4-5 bữa nhỏ để giữ năng lượng ổn định và hạn chế đồ ngọt, nước ngọt.'
-  }
-  if (prompt.includes('ngủ') || prompt.includes('phục hồi') || prompt.includes('mệt')) {
-    return 'Ngủ đủ 7-8 tiếng, uống nước đều và giãn cơ nhẹ sau buổi tập. Nếu cảm thấy mệt, giảm cường độ và ưu tiên phục hồi trước khi tập nặng trở lại.'
-  }
-  if (prompt.includes('cardio') || prompt.includes('tim') || prompt.includes('mỡ')) {
-    return 'Cardio nhẹ 20-25 phút như đi bộ nhanh hoặc elliptical giúp đốt mỡ. Kết hợp với tạ để không chỉ giảm mỡ mà vẫn giữ cơ săn chắc.'
-  }
-  return 'Tôi đề xuất duy trì lịch tập hiện tại, ăn đủ protein và rau xanh. Nếu cần, bạn có thể hỏi chi tiết hơn về mông, eo, chế độ ăn hoặc phục hồi.'
-}
-
-async function fetchChatbotReply(chatHistory: ChatMessage[], message: string): Promise<string> {
-  const apiKey = import.meta.env.VITE_OPENAI_API_KEY
+async function fetchHuggingFaceReply(message: string): Promise<ChatbotReply> {
+  const apiKey = import.meta.env.VITE_HF_API_KEY
   if (!apiKey) {
-    return generateLocalAIReply(message)
+    return { text: '', fallback: true, error: 'Không tìm thấy VITE_HF_API_KEY.' }
   }
-
-  const systemPrompt = `Bạn là trợ lý tập luyện và dinh dưỡng cho nữ 22 tuổi, 60kg, 1m63. Hãy trả lời thân thiện, cụ thể và dễ hiểu.`
 
   const messages = [
-    { role: 'system', content: systemPrompt },
-    ...chatHistory.map((message) => ({
-      role: message.sender === 'user' ? 'user' : 'assistant',
-      content: message.text,
-    })),
+    { role: 'system', content: 'Bạn là trợ lý tập luyện và dinh dưỡng cho nữ 22 tuổi, 62kg, 1m63. Hãy trả lời thân thiện, cụ thể và dễ hiểu.' },
     { role: 'user', content: message },
   ]
 
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://router.huggingface.co/v1/chat/completions', {
       method: 'POST',
-      headers: openAIHeaders(),
+      headers: huggingFaceHeaders(),
       body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
+        model: 'openai/gpt-oss-120b:fastest',
         messages,
         temperature: 0.75,
-        max_tokens: 550,
+        max_tokens: 450,
+        top_p: 0.9,
+        stream: false,
       }),
     })
 
     if (!response.ok) {
       const errorBody = await response.text()
-      console.warn('OpenAI API lỗi, dùng AI nội bộ:', errorBody)
-      return generateLocalAIReply(message)
+      console.warn('Hugging Face API lỗi:', errorBody)
+      return { text: '', fallback: true, error: `Hugging Face lỗi: ${errorBody}` }
     }
 
     const data = await response.json()
-    return data?.choices?.[0]?.message?.content?.trim() ?? 'Chatbot không trả lời.'
+    const text = (() => {
+      if (typeof data === 'string') return data
+      if (typeof data === 'object' && data !== null) {
+        const routerResponse = data as HuggingFaceRouterResponse
+
+        if (Array.isArray(routerResponse.choices) && routerResponse.choices.length > 0) {
+          const choice = routerResponse.choices[0]
+          if (
+            choice.message &&
+            typeof choice.message === 'object' &&
+            typeof choice.message.content === 'string'
+          ) {
+            return choice.message.content
+          }
+          if (typeof choice.text === 'string') {
+            return choice.text
+          }
+        }
+
+        if (typeof routerResponse.generated_text === 'string') return routerResponse.generated_text
+        if (typeof routerResponse.text === 'string') return routerResponse.text
+      }
+      return ''
+    })()
+
+    return {
+      text: text.trim() || 'Chatbot không trả lời.',
+      fallback: false,
+    }
   } catch (err) {
-    console.warn('Lỗi gọi OpenAI, dùng AI nội bộ:', err)
-    return generateLocalAIReply(message)
+    const message = err instanceof Error ? err.message : String(err)
+    console.warn('Lỗi gọi Hugging Face:', message)
+    return { text: '', fallback: true, error: `Lỗi gọi Hugging Face: ${message}` }
   }
 }
+
+function generateLocalAIReply(message: string): ChatbotReply {
+  const prompt = message.toLowerCase()
+  if (prompt.includes('mông') || prompt.includes('đùi') || prompt.includes('squat') || prompt.includes('hip')) {
+    return {
+      text: 'Để mông săn chắc, hãy tập trung vào các bài như hip thrust, goblet squat và glute bridge. Mỗi hiệp nên thực hiện chậm, siết mông ở đỉnh động tác, và tăng tạ dần khi bạn đã quen. Nếu muốn, bạn có thể hỏi thêm về cách điều chỉnh cường độ hoặc cách kết hợp các bài phụ.',
+      fallback: true,
+    }
+  }
+  if (prompt.includes('eo') || prompt.includes('bụng') || prompt.includes('gập bụng') || prompt.includes('plank')) {
+    return {
+      text: 'Để eo thon và bụng săn chắc, kết hợp plank, leg raise và russian twist trong buổi tập core. Giữ cột sống thẳng, hạ chân/chuyển động chậm để cơ bụng nhận tải tốt hơn. Ngoài ra, kiểm soát dinh dưỡng và tránh ăn quá nhiều tinh bột vào buổi tối sẽ giúp vòng eo rõ nét hơn.',
+      fallback: true,
+    }
+  }
+  if (prompt.includes('ăn') || prompt.includes('dinh dưỡng') || prompt.includes('calo') || prompt.includes('thực đơn') || prompt.includes('ăn gì')) {
+    return {
+      text: 'Chế độ ăn nên tập trung vào protein nạc, rau xanh, carb phức hợp và chất béo tốt. Giữ 4-5 bữa nhỏ mỗi ngày, ưu tiên thực phẩm nguyên chất và giảm đồ ngọt. Nếu bạn muốn, tôi có thể gợi ý một thực đơn chi tiết theo từng ngày hoặc các món thay thế khi không có nguyên liệu.',
+      fallback: true,
+    }
+  }
+  if (prompt.includes('ngủ') || prompt.includes('phục hồi') || prompt.includes('mệt') || prompt.includes('đau cơ')) {
+    return {
+      text: 'Phục hồi rất quan trọng. Ngủ đủ 7-8 tiếng mỗi đêm, uống nhiều nước và dành thời gian giãn cơ nhẹ sau mỗi buổi tập. Nếu cơ bắp đau nhức, hãy giảm cường độ và tập yoga nhẹ hoặc đi bộ để hỗ trợ phục hồi.',
+      fallback: true,
+    }
+  }
+  if (prompt.includes('cardio') || prompt.includes('tim') || prompt.includes('mỡ') || prompt.includes('đốt mỡ')) {
+    return {
+      text: 'Cardio nhẹ 20-25 phút như đi bộ nhanh, chạy bộ chậm hoặc elliptical là lựa chọn tốt. Giữ nhịp tim ổn định, không quá gắng sức, và kết hợp với tạ nếu mục tiêu của bạn là giảm mỡ nhưng vẫn giữ cơ săn chắc.',
+      fallback: true,
+    }
+  }
+
+  if (prompt.includes('lịch') || prompt.includes('kế hoạch') || prompt.includes('buổi tập') || prompt.includes('ngày')) {
+    return {
+      text: 'Bạn đang theo lịch tập cân đối với mông, eo và phục hồi. Nếu muốn, tôi có thể giúp bạn tối ưu lại lịch theo mục tiêu giảm mỡ, tăng cơ hoặc tập nhẹ vào ngày phục hồi.',
+      fallback: true,
+    }
+  }
+
+  return {
+    text: 'Mình thấy bạn đang tìm kiếm lời khuyên rõ ràng. Hãy nói cho mình biết bạn muốn ưu tiên gì: tăng cơ, eo thon, mông săn chắc, giảm mỡ hay phục hồi, để mình trả lời chi tiết hơn.',
+    fallback: true,
+  }
+}
+
+async function fetchChatbotReply(message: string): Promise<ChatbotReply> {
+  const hfKey = import.meta.env.VITE_HF_API_KEY
+
+  if (hfKey) {
+    const hfReply = await fetchHuggingFaceReply(message)
+    if (!hfReply.fallback && hfReply.text) {
+      return hfReply
+    }
+    return {
+      ...generateLocalAIReply(message),
+      error: hfReply.error ?? 'Hugging Face không trả lời được. Đang dùng phản hồi nội bộ.',
+    }
+  }
+
+  return {
+    ...generateLocalAIReply(message),
+    error: 'Không tìm thấy VITE_HF_API_KEY. Đang dùng phản hồi nội bộ.',
+  }
+}
+
+ 
 
 function PageButton({
   label,
@@ -625,13 +742,16 @@ function App() {
     setError('')
 
     try {
-      const reply = await fetchChatbotReply([...chatMessages, userMessage], trimmed)
+      const reply = await fetchChatbotReply(trimmed)
       const botMessage: ChatMessage = {
         sender: 'assistant',
-        text: reply,
+        text: reply.text,
         createdAt: now,
       }
       setChatMessages((prev) => [...prev, botMessage])
+      if (reply.fallback) {
+        setError(reply.error ?? 'Hugging Face không khả dụng, đang dùng trả lời nội bộ thay thế.')
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Lỗi không xác định')
     } finally {
@@ -683,7 +803,7 @@ function App() {
           {page === 'schedule' && (
             <section className="page-card schedule-card">
               <h2>Thời khóa biểu tập luyện</h2>
-              <p className="page-description">Lịch tập kết hợp mông, eo, core và phục hồi, thiết kế cho nữ 22 tuổi.</p>
+              <p className="page-description">Lịch tập 5-7 bài/buổi, mỗi buổi ~60 phút theo phong cách PT xịn để tối ưu mông, eo và săn chắc.</p>
               <div className="schedule-grid">
                 {weeklySchedule.map((item) => (
                   <article
@@ -809,8 +929,29 @@ function App() {
 
           {page === 'analysis' && (
             <section className="page-card chat-card">
-              <h2>Chat trực tiếp với chatbot</h2>
-              <p className="page-description">Trò chuyện ngay để nhận phân tích, điều chỉnh lịch và lời khuyên cá nhân hóa.</p>
+              <div className="chat-header">
+                <div>
+                  <h2>Chat trực tiếp với trợ lý AI</h2>
+                  <p className="page-description">Trò chuyện ngay để nhận phân tích, điều chỉnh lịch và lời khuyên cá nhân hóa.</p>
+                </div>
+                <span className="chat-status-badge">Hugging Face</span>
+              </div>
+
+              <div className="chat-window">
+                {chatMessages.length === 0 ? (
+                  <div className="chat-empty">Bắt đầu chat với trợ lý AI để nhận lời khuyên ngay.</div>
+                ) : (
+                  chatMessages.map((message, index) => (
+                    <div key={`${message.sender}-${index}`} className={`chat-bubble ${message.sender}`}>
+                      <div className="bubble-meta">
+                        <span className="bubble-role">{message.sender === 'user' ? 'Bạn' : 'Trợ lý'}</span>
+                        <span>{message.createdAt}</span>
+                      </div>
+                      <p>{message.text}</p>
+                    </div>
+                  ))
+                )}
+              </div>
 
               <form className="chat-form" onSubmit={handleSendMessage}>
                 <textarea
@@ -819,28 +960,15 @@ function App() {
                   placeholder="Hỏi về buổi tập, chế độ ăn hoặc cách phục hồi..."
                   rows={4}
                 />
-                <button type="submit" className="cta-button" disabled={loading}>
-                  {loading ? 'Đang gửi...' : 'Gửi tin nhắn'}
-                </button>
+                <div className="chat-action-row">
+                  <button type="submit" className="cta-button" disabled={loading}>
+                    {loading ? 'Đang gửi...' : 'Gửi tin nhắn'}
+                  </button>
+                </div>
               </form>
 
+              <div className="chat-hint">Ứng dụng chỉ dùng Hugging Face router. Token HF cần quyền Inference Providers. Nếu HF không dùng được thì sẽ dùng phản hồi nội bộ.</div>
               {error && <div className="error-box">{error}</div>}
-
-              <div className="chat-history">
-                {chatMessages.length === 0 ? (
-                  <div className="chat-empty">Bắt đầu chat với trợ lý AI để nhận lời khuyên ngay.</div>
-                ) : (
-                  chatMessages.map((message, index) => (
-                    <div key={`${message.sender}-${index}`} className={`chat-bubble ${message.sender}`}>
-                      <div className="bubble-meta">
-                        <span>{message.sender === 'user' ? 'Bạn' : 'Bot'}</span>
-                        <span>{message.createdAt}</span>
-                      </div>
-                      <p>{message.text}</p>
-                    </div>
-                  ))
-                )}
-              </div>
             </section>
           )}
         </main>
