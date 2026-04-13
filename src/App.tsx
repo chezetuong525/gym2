@@ -59,7 +59,7 @@ const profile = {
   age: 22,
   weight: 62,
   height: 1.63,
-  goal: 'Eo thon, mông săn chắc, cơ thể săn chắc hơn',
+  goal: 'Đừng lừi nữa, ăn đập giờ',
 }
 
 const weeklySchedule: WeeklyItem[] = [
@@ -583,9 +583,33 @@ function generateLocalAIReply(message: string): ChatbotReply {
 }
 
 async function fetchChatbotReply(message: string): Promise<ChatbotReply> {
-  return {
-    ...generateLocalAIReply(message),
-    error: 'Hugging Face không khả dụng trong bản deploy. Đang dùng phản hồi nội bộ.',
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message }),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(errorText || 'Lỗi server AI')
+    }
+
+    const data = await response.json()
+    if (data && typeof data.text === 'string' && data.text.trim()) {
+      return { text: data.text.trim(), fallback: false }
+    }
+
+    throw new Error('Phản hồi AI không hợp lệ')
+  } catch (err) {
+    const errorText = err instanceof Error ? err.message : String(err)
+    return {
+      ...generateLocalAIReply(message),
+      fallback: true,
+      error: `Không gọi được API backend: ${errorText}`,
+    }
   }
 }
 
@@ -661,8 +685,8 @@ function App() {
         <header className="hero-head">
           <div className="hero-copy">
             <p className="hero-tag">Dashboard Tập Luyện & Dinh Dưỡng</p>
-            <h1>Chăm sóc Nữ 22 tuổi 60kg 1m63</h1>
-            <p className="hero-text">Điều hướng lịch tập, thực đơn và chat trực tiếp với trợ lý AI.</p>
+            <h1>Chăm chỉ ik con nợn</h1>
+            <p className="hero-text">Dưới đây là lịch cụ thể</p>
           </div>
           <div className="profile-summary">
             <div>
