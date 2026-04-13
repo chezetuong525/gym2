@@ -55,19 +55,6 @@ type AdviceSection = {
   points: string[]
 }
 
-type HuggingFaceRouterChoice = {
-  message?: {
-    content?: string
-  }
-  text?: string
-}
-
-type HuggingFaceRouterResponse = {
-  choices?: HuggingFaceRouterChoice[]
-  generated_text?: string
-  text?: string
-}
-
 const profile = {
   age: 22,
   weight: 62,
@@ -549,82 +536,6 @@ const adviceSections: AdviceSection[] = [
 
 
 
-const huggingFaceHeaders = () => {
-  const apiKey = import.meta.env.VITE_HF_API_KEY
-  return {
-    'Content-Type': 'application/json',
-    Authorization: apiKey ? `Bearer ${apiKey}` : '',
-  }
-}
-
-async function fetchHuggingFaceReply(message: string): Promise<ChatbotReply> {
-  const apiKey = import.meta.env.VITE_HF_API_KEY
-  if (!apiKey) {
-    return { text: '', fallback: true, error: 'Không tìm thấy VITE_HF_API_KEY.' }
-  }
-
-  const messages = [
-    { role: 'system', content: 'Bạn là trợ lý tập luyện và dinh dưỡng cho nữ 22 tuổi, 62kg, 1m63. Hãy trả lời thân thiện, cụ thể và dễ hiểu.' },
-    { role: 'user', content: message },
-  ]
-
-  try {
-    const response = await fetch('https://router.huggingface.co/v1/chat/completions', {
-      method: 'POST',
-      headers: huggingFaceHeaders(),
-      body: JSON.stringify({
-        model: 'openai/gpt-oss-120b:fastest',
-        messages,
-        temperature: 0.75,
-        max_tokens: 450,
-        top_p: 0.9,
-        stream: false,
-      }),
-    })
-
-    if (!response.ok) {
-      const errorBody = await response.text()
-      console.warn('Hugging Face API lỗi:', errorBody)
-      return { text: '', fallback: true, error: `Hugging Face lỗi: ${errorBody}` }
-    }
-
-    const data = await response.json()
-    const text = (() => {
-      if (typeof data === 'string') return data
-      if (typeof data === 'object' && data !== null) {
-        const routerResponse = data as HuggingFaceRouterResponse
-
-        if (Array.isArray(routerResponse.choices) && routerResponse.choices.length > 0) {
-          const choice = routerResponse.choices[0]
-          if (
-            choice.message &&
-            typeof choice.message === 'object' &&
-            typeof choice.message.content === 'string'
-          ) {
-            return choice.message.content
-          }
-          if (typeof choice.text === 'string') {
-            return choice.text
-          }
-        }
-
-        if (typeof routerResponse.generated_text === 'string') return routerResponse.generated_text
-        if (typeof routerResponse.text === 'string') return routerResponse.text
-      }
-      return ''
-    })()
-
-    return {
-      text: text.trim() || 'Chatbot không trả lời.',
-      fallback: false,
-    }
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err)
-    console.warn('Lỗi gọi Hugging Face:', message)
-    return { text: '', fallback: true, error: `Lỗi gọi Hugging Face: ${message}` }
-  }
-}
-
 function generateLocalAIReply(message: string): ChatbotReply {
   const prompt = message.toLowerCase()
   if (prompt.includes('mông') || prompt.includes('đùi') || prompt.includes('squat') || prompt.includes('hip')) {
@@ -672,26 +583,11 @@ function generateLocalAIReply(message: string): ChatbotReply {
 }
 
 async function fetchChatbotReply(message: string): Promise<ChatbotReply> {
-  const hfKey = import.meta.env.VITE_HF_API_KEY
-
-  if (hfKey) {
-    const hfReply = await fetchHuggingFaceReply(message)
-    if (!hfReply.fallback && hfReply.text) {
-      return hfReply
-    }
-    return {
-      ...generateLocalAIReply(message),
-      error: hfReply.error ?? 'Hugging Face không trả lời được. Đang dùng phản hồi nội bộ.',
-    }
-  }
-
   return {
     ...generateLocalAIReply(message),
-    error: 'Không tìm thấy VITE_HF_API_KEY. Đang dùng phản hồi nội bộ.',
+    error: 'Hugging Face không khả dụng trong bản deploy. Đang dùng phản hồi nội bộ.',
   }
 }
-
- 
 
 function PageButton({
   label,
