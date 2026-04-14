@@ -938,7 +938,7 @@ function App() {
           <PageButton label="Thời khóa biểu" active={page === 'schedule'} onClick={() => setPage('schedule')} />
           <PageButton label="Chế độ ăn" active={page === 'diet'} onClick={() => setPage('diet')} />
           <PageButton label="Video hướng dẫn" active={page === 'videos'} onClick={() => setPage('videos')} />
-          <PageButton label="Lời khuyên" active={page === 'advice'} onClick={() => setPage('advice')} />
+          <PageButton label="Khởi động" active={page === 'advice'} onClick={() => setPage('advice')} />
           <PageButton label="Chat với AI" active={page === 'analysis'} onClick={() => setPage('analysis')} />
         </nav>
 
@@ -1043,10 +1043,10 @@ function App() {
                         <div>
                           <h3>{day.day}</h3>
                           <p>{schedule?.focus ?? 'Video hướng dẫn'} · {day.videos.length} video</p>
+                          <span className="video-summary-action">
+                            {expanded ? 'Đang hiển thị danh sách' : 'Nhấn để xem video'}
+                          </span>
                         </div>
-                        <span className="video-summary-action">
-                          {expanded ? 'Đang hiển thị danh sách' : 'Nhấn để xem video'}
-                        </span>
                       </div>
 
                       {expanded && (
@@ -1096,7 +1096,7 @@ function App() {
                   <article key={item.day} className="advice-item">
                     <div className="schedule-top">
                       <span className="schedule-day">{item.day}</span>
-                      <span className="schedule-focus">Lời khuyên</span>
+                      <span className="schedule-focus">Khởi động</span>
                     </div>
                     <p className="schedule-workout">{item.summary}</p>
                     <button className="link-schedule-button" onClick={() => setSelectedAdvice(item)}>
@@ -1113,7 +1113,7 @@ function App() {
                 <button className="modal-close" onClick={() => setSelectedAdvice(null)} aria-label="Đóng chi tiết">
                   ×
                 </button>
-                <h3>Lời khuyên chi tiết cho {selectedAdvice.day}</h3>
+                <h3>Khởi động chi tiết cho {selectedAdvice.day}</h3>
                 <p className="schedule-detail-intro">
                   {selectedAdvice.summary}
                 </p>
