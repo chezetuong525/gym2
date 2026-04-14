@@ -1,7 +1,7 @@
 ﻿import { useMemo, useState } from 'react'
 import './App.css'
 
-type Page = 'schedule' | 'diet' | 'advice' | 'analysis'
+type Page = 'schedule' | 'diet' | 'videos' | 'advice' | 'analysis'
 type ChatMessage = {
   sender: 'user' | 'assistant'
   text: string
@@ -27,7 +27,19 @@ type WeeklyItem = {
   workout: string
   meal: string
   notes: string
+  videoUrl?: string
   exercises: ExerciseDetail[]
+}
+
+type VideoGuideItem = {
+  title: string
+  description: string
+  assetSrc: string
+}
+
+type VideoGuideDay = {
+  day: string
+  videos: VideoGuideItem[]
 }
 
 type NutritionInfo = {
@@ -50,9 +62,10 @@ type DietItem = {
   meals: MealDetail[]
 }
 
-type AdviceSection = {
-  title: string
-  points: string[]
+type AdviceItem = {
+  day: string
+  summary: string
+  details: string[]
 }
 
 const profile = {
@@ -62,6 +75,8 @@ const profile = {
   goal: 'Eo thon, mông săn chắc và cơ thể săn chắc hơn',
 }
 
+const sampleVideoUrl = 'https://www.w3schools.com/html/mov_bbb.mp4'
+
 const weeklySchedule: WeeklyItem[] = [
   {
     day: 'Thứ 2',
@@ -69,6 +84,7 @@ const weeklySchedule: WeeklyItem[] = [
     workout: 'Hip thrust, Romanian deadlift, Bulgarian split squat, Cable kickback, Hip abduction machine, Glute bridge hold',
     meal: 'Ức gà, khoai lang, rau xanh',
     notes: 'Ưu tiên cảm nhận cơ (Mind-muscle connection). Nghỉ 60-90s giữa các bài nặng.',
+    videoUrl: sampleVideoUrl,
     exercises: [
       {
         name: 'Hip thrust',
@@ -108,6 +124,7 @@ const weeklySchedule: WeeklyItem[] = [
     workout: 'Lat pulldown, Seated row, Face pull, Lateral raise, Tricep pushdown, Dumbbell curl',
     meal: 'Cá hồi, salad, quinoa',
     notes: 'Tập trung vào chuyển động bả vai để không bị mỏi tay trước lưng.',
+    videoUrl: sampleVideoUrl,
     exercises: [
       {
         name: 'Lat pulldown',
@@ -141,6 +158,7 @@ const weeklySchedule: WeeklyItem[] = [
     workout: 'Plank, Leg raise, Cable crunch, Dead bug, Stomach vacuum',
     meal: 'Salad trứng, yến mạch, trái cây',
     notes: 'Bí quyết eo thon là gồng core (bracing) trong mọi bài tập.',
+    videoUrl: sampleVideoUrl,
     exercises: [
       {
         name: 'Stomach vacuum',
@@ -168,6 +186,7 @@ const weeklySchedule: WeeklyItem[] = [
     workout: 'Squat, Leg press, Walking lunges, Leg extension, Hip thrust',
     meal: 'Tôm, bông cải xanh, gạo lứt',
     notes: 'Ngày tập mệt nhất, cần hít thở đúng: xuống hít vào, lên thở ra.',
+    videoUrl: sampleVideoUrl,
     exercises: [
       {
         name: 'Goblet Squat',
@@ -194,6 +213,7 @@ const weeklySchedule: WeeklyItem[] = [
     workout: 'Đi bộ dốc, Glute bridge, Donkey kicks, Fire hydrant',
     meal: 'Sinh tố protein, hạt chia, rau củ',
     notes: 'Mục tiêu là làm nóng cơ thể và tăng lưu thông máu. Không cần tập đến mức kiệt sức.',
+    videoUrl: sampleVideoUrl,
     exercises: [
       {
         name: 'Đi bộ dốc (Incline Walk)',
@@ -227,6 +247,7 @@ const weeklySchedule: WeeklyItem[] = [
     workout: 'Yoga nhẹ, Full body stretching',
     meal: 'Súp rau, cá trắng, trái cây',
     notes: 'Giãn cơ giúp cơ bắp dài ra, thanh mảnh hơn và không bị thô cứng.',
+    videoUrl: sampleVideoUrl,
     exercises: [
       {
         name: 'Child’s Pose (Tư thế em bé)',
@@ -254,6 +275,7 @@ const weeklySchedule: WeeklyItem[] = [
     workout: 'Đi bộ thư giãn hoặc nghỉ ngơi',
     meal: 'Ăn uống thoải mái hơn một chút (Cheat meal nhẹ)',
     notes: 'Để cơ thể tự phục hồi hoàn toàn cho chu kỳ Thứ 2 tuần tới.',
+    videoUrl: sampleVideoUrl,
     exercises: [
       {
         name: 'Đi bộ nhẹ nhàng',
@@ -264,6 +286,134 @@ const weeklySchedule: WeeklyItem[] = [
     ],
   }
 ];
+
+const videoGuideByDay: VideoGuideDay[] = [
+  {
+    day: 'Thứ 2',
+    videos: [
+      {
+        title: 'Hip Thrust',
+        description: 'Kỹ thuật hip thrust để kích hoạt tối đa cơ mông và hông.',
+        assetSrc: '/videos/Thu2/HipThurst.mp4',
+      },
+      {
+        title: 'Romanian Deadlift',
+        description: 'Giữ lưng thẳng và tập trung vào đùi sau khi kéo.',
+        assetSrc: '/videos/Thu2/Romanian deadlift.mp4',
+      },
+      {
+        title: 'Bulgarian Split Squat',
+        description: 'Tư thế chuẩn để tập trung vào mông và đùi trước.',
+        assetSrc: '/videos/Thu2/Bulgarian split squat.mp4',
+      },
+      {
+        title: 'Cable Kickback',
+        description: 'Kéo chân ra sau, siết mông ở đỉnh động tác.',
+        assetSrc: '/videos/Thu2/cable kickback.mp4',
+      },
+      {
+        title: 'Hip Abduction Machine',
+        description: 'Tập mở hông và mông với máy đẩy chân ngang.',
+        assetSrc: '/videos/Thu2/Hip abduction machine.mp4',
+      },
+    ],
+  },
+  {
+    day: 'Thứ 3',
+    videos: [
+      {
+        title: 'Lat Pulldown',
+        description: 'Kéo xà đúng tư thế, giữ ngực hướng lên và bả vai xuống.',
+        assetSrc: '/videos/Thu3/LatPullDown.mp4',
+      },
+      {
+        title: 'Seated Row',
+        description: 'Kéo tay về, ép hai bả vai vào nhau và giữ lưng thẳng.',
+        assetSrc: '/videos/Thu3/Seated row.mp4',
+      },
+      {
+        title: 'Lateral Raise',
+        description: 'Nâng tay ngang vai, giữ khuỷu tay hơi cong.',
+        assetSrc: '/videos/Thu3/Lateral raise.mp4',
+      },
+      {
+        title: 'Tricep Pushdown',
+        description: 'Giữ cùi chỏ cố định để tập trung vào cơ tam đầu.',
+        assetSrc: '/videos/Thu3/Tricep pushdown.mp4',
+      },
+    ],
+  },
+  {
+    day: 'Thứ 4',
+    videos: [
+      {
+        title: 'Stomach Vacuum',
+        description: 'Hóp bụng sâu và giữ hơi để siết cơ bụng trong.',
+        assetSrc: '/videos/Thu4/Stomach vacuum.mp4',
+      },
+      {
+        title: 'Dead Bug',
+        description: 'Giữ lưng dưới bám sàn và thực hiện động tác chậm.',
+        assetSrc: '/videos/Thu4/Dead bug.mp4',
+      },
+    ],
+  },
+  {
+    day: 'Thứ 5',
+    videos: [
+      {
+        title: 'Goblet Squat',
+        description: 'Giữ tạ trước ngực và hạ thấp người với lưng thẳng.',
+        assetSrc: '/videos/Thu5/Goblet Squat.mp4',
+      },
+      {
+        title: 'Leg Press',
+        description: 'Đặt chân đúng vị trí và không khoá gối ở đỉnh.',
+        assetSrc: '/videos/Thu5/Leg press.mp4',
+      },
+      {
+        title: 'Walking Lunges',
+        description: 'Bước dài và giữ thân người thẳng, gối sau gần chạm sàn.',
+        assetSrc: '/videos/Thu5/Walking lunges.mp4',
+      },
+    ],
+  },
+  {
+    day: 'Thứ 6',
+    videos: [
+      {
+        title: 'Glute Bridge',
+        description: 'Đẩy hông lên cao và siết mông kỹ ở đỉnh.',
+        assetSrc: '/videos/Thu6/Glute bridge.mp4',
+      },
+      {
+        title: 'Donkey Kicks',
+        description: 'Giữ lưng thẳng, đá chân lên và siết mông mỗi lần.',
+        assetSrc: '/videos/Thu6/Donkey kicks.mp4',
+      },
+      {
+        title: 'Fire Hydrant',
+        description: 'Mở chân sang ngang để tập cơ mông nhánh ngoài.',
+        assetSrc: '/videos/Thu6/Fire hydrant.mp4',
+      },
+    ],
+  },
+  {
+    day: 'Thứ 7',
+    videos: [
+      {
+        title: 'Child’s Pose',
+        description: 'Thư giãn lưng dưới và mông sau một tuần tập nặng.',
+        assetSrc: '/videos/Thu7/Child’s Pose.png',
+      },
+      {
+        title: 'Cobra Stretch',
+        description: 'Mở rộng lưng, căng cơ bụng và hông nhẹ nhàng.',
+        assetSrc: '/videos/Thu7/Cobra Stretch.png',
+      },
+    ],
+  },
+]
 
 const dietPlan: DietItem[] = [
   {
@@ -499,37 +649,75 @@ const dietPlan: DietItem[] = [
   },
 ]
 
-const adviceSections: AdviceSection[] = [
+const adviceByDay: AdviceItem[] = [
   {
-    title: 'Luyện tập',
-    points: [
-      'Tập 3-4 buổi/tuần, mỗi buổi 45-60 phút.',
-      'Ưu tiên bài tập compound và bài tập mông/đùi.',
-      'Nghỉ giữa hiệp 60-90 giây để duy trì cường độ.',
+    day: 'Thứ 2',
+    summary: 'Khởi động và giãn cơ cho bài tập mông, hông và đùi trước khi vào buổi tập nặng.',
+    details: [
+      'Xoay hông: Đứng thẳng, hai tay chống hông, xoay hông theo vòng tròn rộng từ trái sang phải 10 lần rồi đổi chiều để làm trơn khớp hông.',
+      'Đá chân lăng: Đứng cạnh tường làm điểm tựa, đá chân ra trước và sau như con lắc đồng hồ. Thực hiện 15 lần mỗi bên để làm nóng đùi sau.',
+      'Squat không tạ: Đứng hai chân rộng bằng vai, hạ mông xuống như sắp ngồi vào ghế rồi đứng lên. Làm 15 lần để đánh thức cơ mông.',
+      'Đẩy mông sang ngang: Đứng rộng chân, từ từ hạ trọng tâm sang chân trái rồi sang chân phải để giãn nhẹ đùi trong.',
     ],
   },
   {
-    title: 'Dinh dưỡng',
-    points: [
-      'Chia 4-5 bữa/ngày để giữ năng lượng ổn định.',
-      'Ưu tiên protein nạc, rau xanh, carb phức hợp và chất béo tốt.',
-      'Kiểm soát lượng đường và tinh bột vào bữa tối.',
+    day: 'Thứ 3',
+    summary: 'Lời khuyên khởi động cho lưng và vai, giúp bạn vào bài lưng tay chuẩn và an toàn hơn.',
+    details: [
+      'Xoay cánh tay: Dang hai tay ngang vai, xoay thành các vòng tròn nhỏ từ trong ra ngoài và ngược lại, mỗi chiều 20 vòng.',
+      'Ép bả vai: Đứng thẳng, tưởng tượng bạn đang kẹp một cây bút giữa hai bả vai. Giữ 2 giây rồi thả ra, làm 10 lần.',
+      'Vặn mình nhẹ nhàng: Đứng thẳng, xoay thân người trên sang trái rồi sang phải để làm nóng cột sống.',
+      'Đẩy vai không tạ: Giơ tay lên cao qua đầu, sau đó kéo xuống sao cho khuỷu tay sát sườn.',
     ],
   },
   {
-    title: 'Phục hồi',
-    points: [
-      'Ngủ đủ 7-8 tiếng để cơ bắp tái tạo.',
-      'Giữ co giãn nhẹ sau tập để giảm đau cơ.',
-      'Uống nước đủ và cân bằng điện giải.',
+    day: 'Thứ 4',
+    summary: 'Kích hoạt vùng core và eo trước khi bắt đầu các bài tập bụng và eo.',
+    details: [
+      'Tư thế Con Mèo - Con Bò: Quỳ 4 chân, hít vào thì võng lưng, thở ra thì cong lưng lên trời. Làm 10 lần để giãn lưng.',
+      'Gồng bụng lấy hơi: Nằm ngửa, hít sâu bằng mũi, hóp bụng sâu và giữ 5 giây.',
+      'Co chân chạm tay: Nằm ngửa, lần lượt co từng đầu gối về phía ngực, hai tay ôm và kéo sát gần người.',
+      'Giữ lưng dưới dính sàn khi tập core để bảo vệ cột sống.',
     ],
   },
   {
-    title: 'Tâm lý',
-    points: [
-      'Giữ tinh thần tích cực, đừng quá áp lực.',
-      'Xác định mục tiêu nhỏ theo tuần để dễ duy trì.',
-      'Ghi lại tiến độ giúp bạn theo dõi kết quả rõ ràng.',
+    day: 'Thứ 5',
+    summary: 'Đánh thức mông và đùi trước buổi tập nặng bằng các động tác bật nhịp và mở hông.',
+    details: [
+      'Bước dài (lunge): Bước một chân lên trước một bước rộng, hạ đầu gối chân sau xuống gần chạm sàn rồi đứng lên. Mỗi chân 10 lần.',
+      'Cầu mông nằm ngửa: Nằm ngửa, co gối, đẩy hông lên cao và siết chặt mông ở đỉnh.',
+      'Mở rộng hông: Quỳ 4 chân, nhấc một chân sang ngang như tư thế chó, giữ 1 giây rồi hạ xuống.',
+      'Tập trung cảm nhận cơ mông chứ không chỉ di chuyển chân.',
+    ],
+  },
+  {
+    day: 'Thứ 6',
+    summary: 'Làm nóng toàn thân với cardio nhẹ và kích hoạt mông phục hồi năng động.',
+    details: [
+      'Chạy bộ tại chỗ: Chạy nhẹ nhàng 2 phút để nhịp tim và thân nhiệt tăng lên.',
+      'Nâng cao đùi: Đứng tại chỗ, đưa đầu gối lên cao ngang bụng trong 30 giây.',
+      'Nhảy vung tay: Nhảy bật hai chân sang ngang kết hợp vỗ tay qua đầu. Làm 20 lần để toàn thân linh hoạt.',
+      'Giữ nhịp thở đều và không gắng sức quá mức.',
+    ],
+  },
+  {
+    day: 'Thứ 7',
+    summary: 'Giãn cơ phục hồi sau 5 ngày tập, ưu tiên cơ mông, đùi và lưng dưới.',
+    details: [
+      'Ép mông tư thế ngồi: Ngồi trên sàn, một chân duỗi thẳng, chân kia vắt qua, kéo đầu gối sát ngực và xoay người ra sau. Giữ 30 giây mỗi bên.',
+      'Giãn đùi sau: Ngồi bệt, gập người về phía trước và cố chạm vào mũi bàn chân.',
+      'Tư thế Đứa Trẻ: Quỳ gối, ngồi lên gót chân và bò dài hai tay về phía trước, trán chạm sàn.',
+      'Giãn cơ bụng: Nằm sấp, chống tay xuống sàn và đẩy ngực lên cao, mắt nhìn thẳng.',
+    ],
+  },
+  {
+    day: 'Chủ nhật',
+    summary: 'Nghỉ ngơi hoàn toàn, hồi phục cơ thể và duy trì thói quen thở, uống nước.',
+    details: [
+      'Đi bộ nhẹ: Đi bộ thư giãn 15-20 phút để tăng lưu thông máu.',
+      'Uống đủ nước: Giữ lượng nước đều trong ngày để hỗ trợ phục hồi.',
+      'Giãn cơ nhẹ: Thực hiện vài động tác giãn nhẹ cho lưng dưới và đùi.',
+      'Chuẩn bị tâm lý cho buổi tập Thứ 2 tuần mới.',
     ],
   },
 ]
@@ -633,6 +821,8 @@ function App() {
   const [page, setPage] = useState<Page>('schedule')
   const [selectedDay, setSelectedDay] = useState<WeeklyItem | null>(null)
   const [selectedDiet, setSelectedDiet] = useState<DietItem | null>(null)
+  const [selectedAdvice, setSelectedAdvice] = useState<AdviceItem | null>(null)
+  const [expandedVideoDay, setExpandedVideoDay] = useState<string | null>(null)
   const [chatInput, setChatInput] = useState('')
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const [loading, setLoading] = useState(false)
@@ -643,6 +833,24 @@ function App() {
   }, [])
 
   const calorieTarget = useMemo(() => 1650, [])
+
+  const openScheduleDay = (day: string) => {
+    const item = weeklySchedule.find((schedule) => schedule.day === day)
+    if (item) {
+      setSelectedDay(item)
+    }
+  }
+
+  const isImageAsset = (src: string) => /\.(png|jpe?g|gif|webp|avif)$/i.test(src)
+  const getAssetUrl = (src: string) => {
+    const baseUrl = import.meta.env.BASE_URL || '/'
+    const normalizedPath = src.startsWith('/') ? src.slice(1) : src
+    return `${baseUrl}${encodeURI(normalizedPath)}`
+  }
+
+  const toggleVideoDay = (day: string) => {
+    setExpandedVideoDay((current) => (current === day ? null : day))
+  }
 
   const handleSendMessage = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -694,7 +902,7 @@ function App() {
               </div>
               <div className="stat-card">
                 <span>Buổi/tuần</span>
-                <strong>4 buổi</strong>
+                <strong>5-6 buổi</strong>
               </div>
               <div className="stat-card">
                 <span>Calo</span>
@@ -729,6 +937,7 @@ function App() {
         <nav className="page-nav">
           <PageButton label="Thời khóa biểu" active={page === 'schedule'} onClick={() => setPage('schedule')} />
           <PageButton label="Chế độ ăn" active={page === 'diet'} onClick={() => setPage('diet')} />
+          <PageButton label="Video hướng dẫn" active={page === 'videos'} onClick={() => setPage('videos')} />
           <PageButton label="Lời khuyên" active={page === 'advice'} onClick={() => setPage('advice')} />
           <PageButton label="Chat với AI" active={page === 'analysis'} onClick={() => setPage('analysis')} />
         </nav>
@@ -755,28 +964,6 @@ function App() {
                   </article>
                 ))}
               </div>
-              {selectedDay && (
-                <div className="schedule-modal-backdrop" onClick={() => setSelectedDay(null)}>
-                  <div className="schedule-modal" onClick={(event) => event.stopPropagation()}>
-                    <button className="modal-close" onClick={() => setSelectedDay(null)} aria-label="Đóng chi tiết">
-                      ×
-                    </button>
-                    <h3>Hướng dẫn chi tiết cho {selectedDay.day}</h3>
-                    <p className="schedule-detail-intro">
-                      Hôm nay tập chủ yếu {selectedDay.focus}. Các bài dưới đây giúp bạn thực hiện đúng kỹ thuật và tăng hiệu quả.
-                    </p>
-                    <div className="exercise-list">
-                      {selectedDay.exercises.map((exercise) => (
-                        <article key={exercise.name} className="exercise-item">
-                          <h4>{exercise.name}</h4>
-                          <p><strong>Sets/Reps:</strong> {exercise.sets} / {exercise.reps}</p>
-                          <p><strong>Hướng dẫn:</strong> {exercise.notes}</p>
-                        </article>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
             </section>
           )}
 
@@ -842,23 +1029,103 @@ function App() {
             </section>
           )}
 
+          {page === 'videos' && (
+            <section className="page-card videos-card">
+              <h2>Video hướng dẫn tập luyện</h2>
+              <p className="page-description">Nhấn vào từng ngày để mở danh sách video cần tập. Sau đó bạn có thể xem hướng dẫn chi tiết hoặc ẩn lại.</p>
+              <div className="videos-grid">
+                {videoGuideByDay.map((day) => {
+                  const schedule = weeklySchedule.find((item) => item.day === day.day)
+                  const expanded = expandedVideoDay === day.day
+                  return (
+                    <section key={day.day} className={`video-day-section ${expanded ? 'expanded' : ''}`}>
+                      <div className="video-day-summary" onClick={() => toggleVideoDay(day.day)}>
+                        <div>
+                          <h3>{day.day}</h3>
+                          <p>{schedule?.focus ?? 'Video hướng dẫn'} · {day.videos.length} video</p>
+                        </div>
+                        <span className="video-summary-action">
+                          {expanded ? 'Đang hiển thị danh sách' : 'Nhấn để xem video'}
+                        </span>
+                      </div>
+
+                      {expanded && (
+                        <div className="video-day-body" onClick={(event) => event.stopPropagation()}>
+                          <div className="video-list">
+                            {day.videos.map((video) => (
+                              <article key={video.title} className="video-card">
+                                <h4>{video.title}</h4>
+                                <p>{video.description}</p>
+                                {isImageAsset(video.assetSrc) ? (
+                                  <img src={getAssetUrl(video.assetSrc)} alt={video.title} className="media-preview" />
+                                ) : (
+                                  <video
+                                    src={getAssetUrl(video.assetSrc)}
+                                    controls
+                                    playsInline
+                                    preload="metadata"
+                                    className="media-preview"
+                                  />
+                                )}
+                              </article>
+                            ))}
+                          </div>
+                          <div className="video-actions">
+                            <button className="link-schedule-button" onClick={() => openScheduleDay(day.day)}>
+                              Xem hướng dẫn chi tiết
+                            </button>
+                            <button className="hide-button" onClick={() => setExpandedVideoDay(null)}>
+                              Ẩn
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </section>
+                  )
+                })}
+              </div>
+            </section>
+          )}
+
           {page === 'advice' && (
             <section className="page-card advice-card">
-              <h2>Lời khuyên chuyên sâu</h2>
-              <p className="page-description">Hệ thống hóa những điều cần nhớ để thân hình chuyển biến rõ rệt hơn.</p>
-              <div className="advice-sections">
-                {adviceSections.map((section) => (
-                  <article key={section.title} className="advice-section">
-                    <h3>{section.title}</h3>
-                    <ul>
-                      {section.points.map((point) => (
-                        <li key={point}>{point}</li>
-                      ))}
-                    </ul>
+              <h2>Hướng dẫn khởi động theo ngày</h2>
+              <p className="page-description">Mỗi ngày có một bài khởi động chính, nhấn xem chi tiết để mở phần khởi động và giãn cơ phù hợp.</p>
+              <div className="advice-grid">
+                {adviceByDay.map((item) => (
+                  <article key={item.day} className="advice-item">
+                    <div className="schedule-top">
+                      <span className="schedule-day">{item.day}</span>
+                      <span className="schedule-focus">Lời khuyên</span>
+                    </div>
+                    <p className="schedule-workout">{item.summary}</p>
+                    <button className="link-schedule-button" onClick={() => setSelectedAdvice(item)}>
+                      Xem chi tiết
+                    </button>
                   </article>
                 ))}
               </div>
             </section>
+          )}
+          {selectedAdvice && (
+            <div className="schedule-modal-backdrop" onClick={() => setSelectedAdvice(null)}>
+              <div className="schedule-modal" onClick={(event) => event.stopPropagation()}>
+                <button className="modal-close" onClick={() => setSelectedAdvice(null)} aria-label="Đóng chi tiết">
+                  ×
+                </button>
+                <h3>Lời khuyên chi tiết cho {selectedAdvice.day}</h3>
+                <p className="schedule-detail-intro">
+                  {selectedAdvice.summary}
+                </p>
+                <div className="exercise-list">
+                  {selectedAdvice.details.map((detail, index) => (
+                    <article key={index} className="exercise-item">
+                      <p>{detail}</p>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </div>
           )}
 
           {page === 'analysis' && (
@@ -904,6 +1171,28 @@ function App() {
               <div className="chat-hint">Ứng dụng chỉ dùng Hugging Face router. Token HF cần quyền Inference Providers. Nếu HF không dùng được thì sẽ dùng phản hồi nội bộ.</div>
               {error && <div className="error-box">{error}</div>}
             </section>
+          )}
+          {selectedDay && (
+            <div className="schedule-modal-backdrop" onClick={() => setSelectedDay(null)}>
+              <div className="schedule-modal" onClick={(event) => event.stopPropagation()}>
+                <button className="modal-close" onClick={() => setSelectedDay(null)} aria-label="Đóng chi tiết">
+                  ×
+                </button>
+                <h3>Hướng dẫn chi tiết cho {selectedDay.day}</h3>
+                <p className="schedule-detail-intro">
+                  Hôm nay tập chủ yếu {selectedDay.focus}. Các bài dưới đây giúp bạn thực hiện đúng kỹ thuật và tăng hiệu quả.
+                </p>
+                <div className="exercise-list">
+                  {selectedDay.exercises.map((exercise) => (
+                    <article key={exercise.name} className="exercise-item">
+                      <h4>{exercise.name}</h4>
+                      <p><strong>Sets/Reps:</strong> {exercise.sets} / {exercise.reps}</p>
+                      <p><strong>Hướng dẫn:</strong> {exercise.notes}</p>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </div>
           )}
         </main>
       </div>
