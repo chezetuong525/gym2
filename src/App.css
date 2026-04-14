@@ -358,9 +358,6 @@ body {
 
 .video-day-summary {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
   cursor: pointer;
   border-radius: 20px;
   padding: 16px;
@@ -379,9 +376,11 @@ body {
 }
 
 .video-summary-action {
+  display: block;
   color: #a5b4fc;
   font-weight: 600;
-  white-space: nowrap;
+  margin-top: 10px;
+  font-size: 0.95rem;
 }
 
 .video-day-body {
