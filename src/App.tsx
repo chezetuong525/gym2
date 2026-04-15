@@ -1200,7 +1200,7 @@ function App() {
                         <span className="bubble-role">{message.sender === 'user' ? 'Bạn' : 'Trợ lý'}</span>
                         <span>{message.createdAt}</span>
                       </div>
-                      <p>{message.text}</p>
+                    <p style={{ whiteSpace: 'pre-wrap' }}>{message.text}</p>
                     </div>
                   ))
                 )}
