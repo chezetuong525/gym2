@@ -14,6 +14,44 @@ type ChatbotReply = {
   error?: string
 }
 
+const CHAT_SERVICE_URL = (import.meta.env.VITE_CHAT_BACKEND_URL ?? 'https://api-gym-1-l2ip.onrender.com')
+  .replace(/\/+$/g, '')
+
+const CHAT_SERVICE_PATH = import.meta.env.VITE_CHAT_BACKEND_PATH ?? '/api/hf'
+
+const CHAT_SERVICE_ENDPOINT = `${CHAT_SERVICE_URL}${
+  CHAT_SERVICE_PATH.startsWith('/') ? CHAT_SERVICE_PATH : `/${CHAT_SERVICE_PATH}`
+}`
+
+// ✅ Define type rõ ràng
+type AIResponse = {
+  choices?: {
+    message?: { content?: string }
+    text?: string
+  }[]
+  generated_text?: string
+  output?: string
+  text?: string
+  outputs?: {
+    generated_text?: string
+    data?: { text?: string }[]
+  }[]
+}
+
+// ✅ Không còn any
+async function parseAIResponseData(data: AIResponse): Promise<string> {
+  return (
+    data?.choices?.[0]?.message?.content ??
+    data?.choices?.[0]?.text ??
+    data?.generated_text ??
+    data?.output ??
+    data?.text ??
+    data?.outputs?.[0]?.generated_text ??
+    data?.outputs?.[0]?.data?.[0]?.text ??
+    ''
+  )
+}
+
 type ExerciseDetail = {
   name: string
   sets: string
@@ -770,24 +808,38 @@ function generateLocalAIReply(message: string): ChatbotReply {
   }
 }
 
+const CHAT_SERVICE_MODEL = 'meta-llama/Llama-3.1-8B-Instruct'
+
 async function fetchChatbotReply(message: string): Promise<ChatbotReply> {
   try {
-    const response = await fetch('/api/chat', {
+    const response = await fetch(CHAT_SERVICE_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({
+        model: CHAT_SERVICE_MODEL,
+        inputs: message,
+        parameters: {
+          temperature: 0.75,
+          top_p: 0.9,
+        },
+      }),
     })
 
+    const textResponse = await response.text()
+    const jsonData = response.headers.get('content-type')?.includes('application/json')
+      ? JSON.parse(textResponse || '{}')
+      : {}
+
     if (!response.ok) {
-      const errorText = await response.text()
-      throw new Error(errorText || 'Lỗi server AI')
+      const errorMessage = jsonData?.error || textResponse || `HTTP ${response.status}`
+      throw new Error(errorMessage)
     }
 
-    const data = await response.json()
-    if (data && typeof data.text === 'string' && data.text.trim()) {
-      return { text: data.text.trim(), fallback: false }
+    const text = await parseAIResponseData(jsonData)
+    if (typeof text === 'string' && text.trim()) {
+      return { text: text.trim(), fallback: false }
     }
 
     throw new Error('Phản hồi AI không hợp lệ')
@@ -800,7 +852,7 @@ async function fetchChatbotReply(message: string): Promise<ChatbotReply> {
     }
   }
 }
-
+console.log("MODEL FE:", CHAT_SERVICE_MODEL);
 function PageButton({
   label,
   active,
