@@ -1184,20 +1184,20 @@ function App() {
             <section className="page-card chat-card">
               <div className="chat-header">
                 <div>
-                  <h2>Chat trực tiếp với trợ lý AI</h2>
-                  <p className="page-description">Trò chuyện ngay để nhận phân tích, điều chỉnh lịch và lời khuyên cá nhân hóa.</p>
+                  <h2>Chat trực tiếp với Chesse</h2>
+                  <p className="page-description">Nạp tìn cho a</p>
                 </div>
                 <span className="chat-status-badge">Hugging Face</span>
               </div>
 
               <div className="chat-window">
                 {chatMessages.length === 0 ? (
-                  <div className="chat-empty">Bắt đầu chat với trợ lý AI để nhận lời khuyên ngay.</div>
+                  <div className="chat-empty">Am đai</div>
                 ) : (
                   chatMessages.map((message, index) => (
                     <div key={`${message.sender}-${index}`} className={`chat-bubble ${message.sender}`}>
                       <div className="bubble-meta">
-                        <span className="bubble-role">{message.sender === 'user' ? 'Bạn' : 'Trợ lý'}</span>
+                        <span className="bubble-role">{message.sender === 'user' ? 'Con nợn Mei' : 'Chesse'}</span>
                         <span>{message.createdAt}</span>
                       </div>
                     <p style={{ whiteSpace: 'pre-wrap' }}>{message.text}</p>
@@ -1210,7 +1210,7 @@ function App() {
                 <textarea
                   value={chatInput}
                   onChange={(event) => setChatInput(event.target.value)}
-                  placeholder="Hỏi về buổi tập, chế độ ăn hoặc cách phục hồi..."
+                  placeholder="Hỏi gì cũng được hết, lẹ lẹ đi....."
                   rows={4}
                 />
                 <div className="chat-action-row">
@@ -1220,7 +1220,7 @@ function App() {
                 </div>
               </form>
 
-              <div className="chat-hint">Ứng dụng chỉ dùng Hugging Face router. Token HF cần quyền Inference Providers. Nếu HF không dùng được thì sẽ dùng phản hồi nội bộ.</div>
+              <div className="chat-hint">AI xịn không con nợn, do ChiTun phát triển</div>
               {error && <div className="error-box">{error}</div>}
             </section>
           )}
