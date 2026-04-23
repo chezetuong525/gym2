@@ -66,6 +66,14 @@ export default function VideosSection({
                         <p>{video.description}</p>
                         {isImageAsset(video.assetSrc) ? (
                           <img src={getAssetUrl(video.assetSrc)} alt={video.title} className="media-preview" />
+                        ) : video.assetSrc.includes('youtube.com/embed/') ? (
+                          <iframe
+                            src={video.assetSrc}
+                            title={video.title}
+                            className="media-preview"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          />
                         ) : (
                           <div className="video-wrapper">
                             <video
