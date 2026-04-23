@@ -956,3 +956,101 @@ body {
     margin-top: 16px;
   }
 }
+
+/* Submenu styling */
+.page-button-container {
+  position: relative;
+  flex: 1 1 210px;
+}
+
+.page-button.has-submenu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.submenu-arrow {
+  font-size: 0.7rem;
+  margin-left: 8px;
+  transition: transform 0.2s ease;
+}
+
+.page-button-container:has(.submenu) .submenu-arrow {
+  transform: rotate(180deg);
+}
+
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 8px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
+  overflow: hidden;
+  z-index: 100;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.5);
+}
+
+.submenu-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 18px;
+  border: none;
+  background: transparent;
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.submenu-item:hover {
+  background: rgba(99, 102, 241, 0.15);
+  color: #c7d2fe;
+}
+
+.submenu-item:first-child {
+  border-top: none;
+}
+
+.submenu-item:not(:last-child) {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+}
+
+/* Guide modal styling */
+.guide-section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.guide-section h4 {
+  margin: 0 0 16px;
+  font-size: 1.1rem;
+  color: #c7d2fe;
+  font-weight: 600;
+}
+
+.guide-subsection {
+  margin-top: 16px;
+}
+
+.guide-subsection h5 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  color: #a78bfa;
+  font-weight: 500;
+}
+
+.band-info {
+  background: rgba(99, 102, 241, 0.1);
+  border-left: 3px solid #6366f1;
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: #cbd5e1;
+  margin: 0;
+}
