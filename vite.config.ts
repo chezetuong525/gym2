@@ -1,12 +1,14 @@
 import { defineConfig } from 'vite'
-import react, { reactCompilerPreset } from '@vitejs/plugin-react'
-import babel from '@rolldown/plugin-babel'
+import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
+// Cấu hình tối giản để tránh lỗi MIME type trên GitHub Pages
 export default defineConfig({
-  base: '/gym2/',
-  plugins: [
-    react(),
-    babel({ presets: [reactCompilerPreset()] })
-  ],
+  base: '/gym2/', 
+  plugins: [react()],
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    // Đảm bảo không tạo file quá lạ khiến GitHub nhầm thành binary
+    sourcemap: false,
+  },
 })

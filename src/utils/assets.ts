@@ -5,5 +5,9 @@ export function isImageAsset(src: string) {
 export function getAssetUrl(src: string) {
   const baseUrl = import.meta.env.BASE_URL || '/'
   const normalizedPath = src.startsWith('/') ? src.slice(1) : src
-  return `${baseUrl}${encodeURI(normalizedPath)}`
+  const encodedPath = normalizedPath
+    .split('/')
+    .map((segment) => encodeURIComponent(segment))
+    .join('/')
+  return `${baseUrl}${encodedPath}`
 }

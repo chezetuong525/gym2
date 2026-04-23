@@ -32,17 +32,17 @@ export const videoGuideByDayHome: VideoGuideDay[]= [
       {
         title: 'Band Over Row',
         description: 'Kéo Dây Theo Chiều Ngang - Mục đích: Kích hoạt cơ lưng giữa, cáp sau vai và cơ lưng rộng. Cách thực hiện: Đứng ngay, cầm dây kháng lực ngang vai, kéo dây về phía thân người bằng cách co khuỷu tay, ép hai cáp vai lại gần nhau. Thả từ từ. Lưu ý: Tập trung vào việc co lưng giữa, không chỉ dùng tay, giữ khuỷu tay gần người.',
-        assetSrc: '/videos2/Thu3/Band Over Row.mp4',
+        assetSrc: 'https://www.youtube.com/embed/6TSP0BzQZUw',
       },
       {
         title: 'Lat Pulldown',
         description: 'Kéo Dây Từ Trên Xuống - Mục đích: Kích hoạt cơ lưng rộng và cơ trước cáp tay. Cách thực hiện: Đứng hay ngồi, cầm dây kháng lực lên cao phía trên đầu, kéo dây xuống về phía ngực ngang mức xương quai xanh, ép lưng rộng. Thả lên từ từ. Lưu ý: Giữ ngực hướng lên, không cúi đầu, khuỷu tay kéo xuống phía sau người.',
-        assetSrc: '/videos2/Thu3/Lat Pulldown.mp4',
+        assetSrc: 'https://www.youtube.com/embed/CAwf7n6Luuc',
       },
       {
         title: 'Overhead Press',
         description: 'Nâng Tay Lên Cao - Mục đích: Kích hoạt cơ vai trước, tam đầu tay và ngực trên. Cách thực hiện: Đứng ngay, cầm dây kháng lực ngang vai ở độ cao ngang vai, đẩy tay lên cao phía trên đầu, co cơ vai ở đỉnh cao nhất. Hạ từ từ về vị trí đầu. Lưu ý: Giữ lõi co, không để lưng bị vênh, siết vai khi tay ở trên.',
-        assetSrc: '/videos2/Thu3/Overhead Press.mp4',
+        assetSrc: 'https://www.youtube.com/embed/B-aVuyhvLHU',
       },
     ],
   },
@@ -81,12 +81,12 @@ export const videoGuideByDayHome: VideoGuideDay[]= [
       {
         title: 'Band Pull-Apart',
         description: 'Kéo Dây Tách Rời - Mục đích: Kích hoạt cơ vai sau, cáp sau vai và cơ lưng giữa, tốt cho tư thế. Cách thực hiện: Đứng ngay, cầm dây kháng lực ngang mắt ở trước mặt, tay duỗi thẳng, kéo dây tách rời bằng cách hạ tay xuống (tay kéo apart), ép cáp vai sau, thả dây trở lại vị trí đầu. Lưu ý: Giữ khuỷu tay gần như duỗi thẳng, động tác nhỏ nhưng có kiểm soát, tập trung vào cáp sau vai.',
-        assetSrc: '/videos2/Thu6/Band Pull-Apart.mp4',
+        assetSrc: 'https://www.youtube.com/embed/8-3AR9nLU8E',
       },
       {
         title: 'Bicycle Crunches',
         description: 'Sụn Gác Xe - Mục đích: Kích hoạt cơ bụng trước và tìm nếp (obliques). Cách thực hiện: Nằm lưng, tay đặt sau đầu, nâng vai lên, kéo gối về phía ngực từng bên xen kẽ, đồng thời xoay cơ thể và kéo khuỷu tay đối diện về phía gối. Thực hiện chậm có kiểm soát. Lưu ý: Không co cổ quá mạnh, xoay từ lõi cơ thể không phải từ cổ, giữ một nhịp đều đều.',
-        assetSrc: '/videos2/Thu6/Bicycle Crunches.mp4',
+        assetSrc: 'https://www.youtube.com/embed/9FGilxCbdz8',
       },
     ],
   },
@@ -96,7 +96,7 @@ export const videoGuideByDayHome: VideoGuideDay[]= [
       {
         title: 'Jumping Jacks, Squat Thrusts & Mountain Climbers',
         description: 'Bài Tập Cardio Toàn Thân Có Dây - Mục đích: Tăng nhịp tim, đốt caloríe và tăng sức bền toàn thân. Gồm 3 bài tập: (1) Nhảy Jack Có Dây - Nhảy lên, tay cao, dây quanh chân, xả chân ngoài và comb vào. (2) Squat Thrusts - Từ đứng, hạ xuống tư thế plank, đá chân ra sau (tay vẫn trên sàn), kéo chân lại, nhảy lên cao. (3) Mountain Climbers - Tư thế plank, kéo gối dần dần lên về phía ngực xen kẽ, thực hiện nhanh. Lưu ý: Thực hiện ở mức độ bạn có thể, nghỉ nếu cần, tập trung vào form đúng hơn tốc độ.',
-        assetSrc: '/videos2/Thu7/FullBody.mp4',
+        assetSrc: 'https://www.youtube.com/embed/7wNn2EQkQss',
       },
     ],
   },

@@ -19,10 +19,13 @@ export default function VideosSection({
   exerciseGuides,
 }: VideosSectionProps) {
   const [selectedGuides, setSelectedGuides] = useState<ExerciseGuideDetail[]>([])
+  const [failedVideoTitle, setFailedVideoTitle] = useState<string | null>(null)
 
   const openGuideModal = (day: string) => {
     const dayData = videoGuideByDay.find(d => d.day === day)
     if (!dayData) return
+
+    setFailedVideoTitle(null)
 
     const guides = dayData.videos
       .map(video => exerciseGuides.find(
@@ -64,13 +67,27 @@ export default function VideosSection({
                         {isImageAsset(video.assetSrc) ? (
                           <img src={getAssetUrl(video.assetSrc)} alt={video.title} className="media-preview" />
                         ) : (
-                          <video
-                            src={getAssetUrl(video.assetSrc)}
-                            controls
-                            playsInline
-                            preload="metadata"
-                            className="media-preview"
-                          />
+                          <div className="video-wrapper">
+                            <video
+                              controls
+                              playsInline
+                              preload="metadata"
+                              className="media-preview"
+                              onError={() => setFailedVideoTitle(video.title)}
+                            >
+                              <source src={getAssetUrl(video.assetSrc)} type="video/mp4" />
+                              Trình duyệt của bạn không hỗ trợ video này.
+                            </video>
+
+                            {failedVideoTitle === video.title && (
+                              <p className="video-error">
+                                Video không tải được trên thiết bị này. Mở trực tiếp ở tab mới:&nbsp;
+                                <a href={getAssetUrl(video.assetSrc)} target="_blank" rel="noreferrer">
+                                  Xem video
+                                </a>
+                              </p>
+                            )}
+                          </div>
                         )}
                       </article>
                     ))}

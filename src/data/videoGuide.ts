@@ -7,27 +7,27 @@ export const videoGuideByDay: VideoGuideDay[] = [
       {
         title: 'Hip Thrust',
         description: 'Kỹ thuật hip thrust để kích hoạt tối đa cơ mông và hông.',
-        assetSrc: '/videos/Thu2/HipThurst.mp4',
+        assetSrc: 'https://www.youtube.com/embed/SEdqd1n0cvg',
       },
       {
         title: 'Romanian Deadlift',
         description: 'Giữ lưng thẳng và tập trung vào đùi sau khi kéo.',
-        assetSrc: '/videos/Thu2/Romanian deadlift.mp4',
+        assetSrc: 'https://www.youtube.com/embed/hCDzSR6bW10',
       },
       {
         title: 'Bulgarian Split Squat',
         description: 'Tư thế chuẩn để tập trung vào mông và đùi trước.',
-        assetSrc: '/videos/Thu2/Bulgarian split squat.mp4',
+        assetSrc: 'https://www.youtube.com/embed/2C-uNgKwPLE',
       },
       {
         title: 'Cable Kickback',
         description: 'Kéo chân ra sau, siết mông ở đỉnh động tác.',
-        assetSrc: '/videos/Thu2/cable kickback.mp4',
+        assetSrc: 'https://www.youtube.com/embed/5e6ZsNA__Og',
       },
       {
         title: 'Hip Abduction Machine',
         description: 'Tập mở hông và mông với máy đẩy chân ngang.',
-        assetSrc: '/videos/Thu2/Hip abduction machine.mp4',
+        assetSrc: 'https://www.youtube.com/embed/GNPyIw7N7Tw',
       },
     ],
   },
